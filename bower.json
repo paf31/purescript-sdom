@@ -1,0 +1,16 @@
+{
+  "name": "purescript-static-dom",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "dependencies": {
+    "purescript-prelude": "^3.1.1",
+    "purescript-maps": "^3.6.0",
+    "purescript-dom": "^4.13.2",
+    "purescript-profunctor-lenses": "^3.8.0"
+  },
+  "devDependencies": {}
+}
