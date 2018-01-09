@@ -3,85 +3,93 @@ module Test.Main where
 import Prelude
 
 import Control.Monad.Eff (Eff)
+import Control.Monad.Eff.Console (CONSOLE)
 import Control.Monad.Eff.Exception (EXCEPTION, throw)
-import Control.Monad.ST (runST)
 import DOM (DOM)
 import DOM.HTML (window)
 import DOM.HTML.Types (htmlDocumentToNonElementParentNode)
 import DOM.HTML.Window (document)
 import DOM.Node.NonElementParentNode (getElementById)
+import Data.Array (deleteAt, length, updateAt, (!!), (..), (:))
+import Data.Lens (lens')
 import Data.Lens.Record (prop)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Newtype (wrap)
-import Data.Profunctor (lmap)
 import Data.StrMap (empty, singleton)
-import Data.String (toUpper)
 import Data.Symbol (SProxy(..))
-import StaticDOM (StaticDOM(..), runStaticDOM)
+import Data.Tuple (Tuple(..))
+import StaticDOM (StaticDOM, element, element_, runStaticDOM, text)
 import Unsafe.Coerce (unsafeCoerce)
 
-button :: StaticDOM Int Int
-button =
-  Element
-    { el: "button"
-    , attrs: singleton "style" \counter ->
-        if counter `mod` 2 > 0 then "color: red" else ""
-    , handlers: singleton "click" \_ counter ->
-        counter + 1
-    , children: [
-        Text \counter ->
-          show counter <> " (click to increment)"
+array
+  :: forall a
+   . Int
+  -> a
+  -> (Int -> StaticDOM a a)
+  -> StaticDOM (Array a) (Array a)
+array n dflt f =
+    element_ "div"
+      [ addButton
+      , element_ "ol" (map toChild (0 .. (n - 1)))
       ]
-    }
+  where
+    toChild idx =
+      element "li"
+        (singleton "style" \xs ->
+          if idx < length xs
+            then ""
+            else "display: none")
+        empty
+        [ lens' (at idx) (f idx)
+        , removeButton idx
+        ]
+
+    addButton =
+      element "button"
+        (singleton "style" \xs ->
+          if length xs >= n
+            then "display: none"
+            else "")
+        (singleton "click" \_ xs -> dflt : xs)
+        [ text \_ -> "+ Add" ]
+
+    removeButton idx =
+      element "button"
+        empty
+        (singleton "click" \_ xs ->
+          fromMaybe xs (deleteAt idx xs))
+        [ text \_ -> "✕" ]
+
+    at idx xs =
+      Tuple (fromMaybe dflt (xs !! idx))
+            (\x -> fromMaybe xs (updateAt idx x xs))
 
 input :: StaticDOM String String
 input =
-  Element
-    { el: "input"
-    , attrs: singleton "value" (\value -> value)
-    , handlers: singleton "change" \e _ -> (unsafeCoerce e).target.value
-    , children: []
-    }
-
-label :: StaticDOM String String
-label =
-  Element
-    { el: "span"
-    , attrs: singleton "value" \value -> value
-    , handlers: singleton "change" \e _ -> (unsafeCoerce e).target.value
-    , children: [
-        Text \value -> value
-      ]
-    }
+  element "input"
+    (singleton "value" (\value -> value))
+    (singleton "change" \e _ -> (unsafeCoerce e).target.value)
+    []
 
 type Model =
-  { counter1 :: Int
-  , counter2 :: Int
-  , label :: String
+  { tasks :: Array String
   }
 
 view :: StaticDOM Model Model
-view =
-  Element
-    { el: "div"
-    , attrs: empty
-    , handlers: empty
-    , children: [ prop (SProxy :: SProxy "counter1") button
-                , prop (SProxy :: SProxy "counter2") button
-                , prop (SProxy :: SProxy "label") input
-                , prop (SProxy :: SProxy "label") (lmap toUpper label)
-                ]
-    }
+view = element_ "div"
+  [ prop (SProxy :: SProxy "tasks") (array 10 "" \_ -> input)
+  ]
 
 type FX =
-  ( dom :: DOM
+  ( console :: CONSOLE
+  , dom :: DOM
   , exception :: EXCEPTION
   )
 
 main :: Eff FX Unit
-main = runST do
+main = do
   document <- map htmlDocumentToNonElementParentNode (window >>= document)
   container <- getElementById (wrap "container") document
   case container of
-    Just el -> runStaticDOM el { counter1: 0, counter2: 0, label: "change me" } view
+    Just el -> runStaticDOM el { tasks: [] } view
     Nothing -> throw "No 'container' node!"
