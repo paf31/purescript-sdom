@@ -18,10 +18,10 @@ import DOM.HTML (window)
 import DOM.HTML.HTMLInputElement (setValue)
 import DOM.HTML.Types (htmlDocumentToDocument)
 import DOM.HTML.Window (document)
-import DOM.Node.Document (createElement, createTextNode)
+import DOM.Node.Document (createDocumentFragment, createElement, createTextNode)
 import DOM.Node.Element (setAttribute)
 import DOM.Node.Node (appendChild, setTextContent)
-import DOM.Node.Types (Element, Node, elementToEventTarget, elementToNode, textToNode)
+import DOM.Node.Types (Element, Node, documentFragmentToNode, elementToEventTarget, elementToNode, textToNode)
 import Data.Array.ST (emptySTArray, freeze, pushSTArray)
 import Data.Foldable (traverse_)
 import Data.FoldableWithIndex (traverseWithIndex_)
@@ -152,4 +152,7 @@ runStaticDOM root model v = runST runStaticDOM_ where
               _ <- writeSTRef modelRef newModel
               ls <- freeze listeners
               traverse_ (\l -> l oldModel newModel) ls
-    go (elementToNode root) v
+    fragment <- createDocumentFragment (htmlDocumentToDocument document)
+    go (documentFragmentToNode fragment) v
+    _ <- appendChild (documentFragmentToNode fragment) (elementToNode root)
+    pure unit
