@@ -11,7 +11,8 @@
     "purescript-maps": "^3.6.0",
     "purescript-dom": "^4.13.2",
     "purescript-profunctor-lenses": "^3.8.0",
-    "purescript-console": "^3.0.0"
+    "purescript-console": "^3.0.0",
+    "purescript-behaviors": "^6.3.0"
   },
   "devDependencies": {}
 }
