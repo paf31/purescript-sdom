@@ -1,8 +1,10 @@
 module StaticDOM
   ( StaticDOM
   , SDFX
+  , Attr(..)
   , element
   , element_
+  , ArrayChannel(..)
   , array
   , text
   , runStaticDOM
@@ -12,7 +14,6 @@ import Prelude
 
 import Control.Alternative (empty, (<|>))
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, log)
 import Control.Monad.Eff.Ref (REF, newRef, readRef, writeRef)
 import Control.Monad.Rec.Class (Step(..), tailRecM)
 import DOM (DOM)
@@ -23,7 +24,7 @@ import DOM.HTML.HTMLInputElement (setValue)
 import DOM.HTML.Types (htmlDocumentToDocument)
 import DOM.HTML.Window (document)
 import DOM.Node.Document (createDocumentFragment, createElement, createTextNode)
-import DOM.Node.Element (setAttribute)
+import DOM.Node.Element (removeAttribute, setAttribute)
 import DOM.Node.Node (appendChild, lastChild, removeChild, setTextContent)
 import DOM.Node.Types (Element, Node, documentFragmentToNode, elementToEventTarget, elementToNode, textToNode)
 import Data.Array (length, modifyAt, unsafeIndex, (!!), (..))
@@ -44,38 +45,38 @@ import FRP.Event (Event, create, subscribe)
 import Partial.Unsafe (unsafePartial)
 import Unsafe.Coerce (unsafeCoerce)
 
-type SDFX eff = (console :: CONSOLE, dom :: DOM, frp :: FRP | eff)
+type SDFX eff = (dom :: DOM, frp :: FRP | eff)
 
-newtype StaticDOM eff e i o = StaticDOM
+newtype StaticDOM eff ch i o = StaticDOM
   (Node
   -> i
   -> Event { old :: i, new :: i }
-  -> Eff eff (Event (Either e (i -> o))))
+  -> Eff eff (Event (Either ch (i -> o))))
 
-instance functorStaticDOM :: Functor (StaticDOM eff e i) where
+instance functorStaticDOM :: Functor (StaticDOM eff ch i) where
   map f (StaticDOM sd) = StaticDOM \n a e ->
     map (map (map f)) <$> sd n a e
 
-instance profunctorStaticDOM :: Profunctor (StaticDOM eff e) where
+instance profunctorStaticDOM :: Profunctor (StaticDOM eff ch) where
   dimap f g (StaticDOM sd) = StaticDOM \n a e ->
     map (map (dimap f g)) <$> sd n (f a) (map (\{old, new} -> { old: f old, new: f new }) e)
 
-instance strongStaticDOM :: Strong (StaticDOM eff e) where
+instance strongStaticDOM :: Strong (StaticDOM eff ch) where
   first (StaticDOM sd) = StaticDOM \n (Tuple a _) e ->
     map (map first) <$> sd n a (map (\{ old, new } -> { old: fst old, new: fst new }) e)
   second (StaticDOM sd) = StaticDOM \n (Tuple _ b) e ->
     map (map second) <$> sd n b (map (\{ old, new } -> { old: snd old, new: snd new }) e)
 
 unStaticDOM
-  :: forall eff e i o
-   . StaticDOM eff e i o
+  :: forall eff ch i o
+   . StaticDOM eff ch i o
   -> Node
   -> i
   -> Event { old :: i, new :: i }
-  -> Eff eff (Event (Either e (i -> o)))
+  -> Eff eff (Event (Either ch (i -> o)))
 unStaticDOM (StaticDOM f) = f
 
-text :: forall eff e i o. (i -> String) -> StaticDOM (dom :: DOM, frp :: FRP, console :: CONSOLE | eff) e i o
+text :: forall eff ch i o. (i -> String) -> StaticDOM (SDFX eff) ch i o
 text f = StaticDOM \n model e -> do
   doc <- window >>= document
   tn <- createTextNode (f model) (htmlDocumentToDocument doc)
@@ -83,49 +84,58 @@ text f = StaticDOM \n model e -> do
   _ <- e `subscribe` \{old, new} -> do
     let oldValue = f old
         newValue = f new
-    when (oldValue /= newValue) do
-      log $ "set text content to " <> show newValue
+    when (oldValue /= newValue) $
       setTextContent newValue (textToNode tn)
   pure empty
 
 element_
-  :: forall eff e i o
+  :: forall eff ch i o
    . String
-  -> Array (StaticDOM (SDFX eff) e i o)
-  -> StaticDOM (SDFX eff) e i o
+  -> Array (StaticDOM (SDFX eff) ch i o)
+  -> StaticDOM (SDFX eff) ch i o
 element_ el = element el StrMap.empty StrMap.empty
 
+data Attr
+  = StringAttr String
+  | BooleanAttr Boolean
+
+derive instance eqAttr :: Eq Attr
+
 element
-  :: forall eff e i o
+  :: forall eff ch i o
    . String
-  -> StrMap.StrMap (i -> String)
-  -> StrMap.StrMap (Event.Event -> Either e (i -> o))
-  -> Array (StaticDOM (SDFX eff) e i o)
-  -> StaticDOM (SDFX eff) e i o
+  -> StrMap.StrMap (i -> Attr)
+  -> StrMap.StrMap (Event.Event -> Either ch (i -> o))
+  -> Array (StaticDOM (SDFX eff) ch i o)
+  -> StaticDOM (SDFX eff) ch i o
 element el attrs handlers children = StaticDOM \n model updates -> do
   doc <- window >>= document
   e <- createElement el (htmlDocumentToDocument doc)
   _ <- appendChild (elementToNode e) n
   let setAttr
         :: String
-        -> (i -> String)
+        -> (i -> Attr)
         -> Eff (SDFX eff) Unit
       setAttr attrName f = do
-        setAttribute attrName (f model) e
+        let go = case _ of
+                   StringAttr s ->
+                     case attrName of
+                       "value" -> setValue s (unsafeCoerce e)
+                       _ -> setAttribute attrName s e
+                   BooleanAttr true -> setAttribute attrName attrName e
+                   BooleanAttr false -> removeAttribute attrName e
+        go (f model)
         _ <- updates `subscribe` \{old, new} -> do
               let oldValue = f old
                   newValue = f new
-              when (oldValue /= newValue) do
-                log $ "set attribute " <> show attrName <> " to " <> show newValue
-                case attrName of
-                  "value" -> setValue newValue (unsafeCoerce e)
-                  _ -> setAttribute attrName newValue e
+              when (oldValue /= newValue) $
+                go newValue
         pure unit
 
       setHandler
         :: String
-        -> (Event.Event -> Either e (i -> o))
-        -> Eff (SDFX eff) (Event (Either e (i -> o)))
+        -> (Event.Event -> Either ch (i -> o))
+        -> Eff (SDFX eff) (Event (Either ch (i -> o)))
       setHandler evtName f = do
         {event, push} <- create
         addEventListener (wrap evtName) (eventListener (push <<< f)) false (elementToEventTarget e)
@@ -146,11 +156,15 @@ removeLastNChildren m n = tailRecM loop m where
       Just child_ -> do _ <- removeChild child_ n
                         pure (Loop (toRemove - 1))
 
+data ArrayChannel i channel
+  = Parent channel
+  | Here (Int -> Array i -> Array i)
+
 array
-  :: forall eff e i
+  :: forall eff ch i
    . String
-  -> StaticDOM (SDFX eff) (Either e (Int -> Array i -> Array i)) i i
-  -> StaticDOM (SDFX eff) e (Array i) (Array i)
+  -> StaticDOM (SDFX eff) (ArrayChannel i ch) i i
+  -> StaticDOM (SDFX eff) ch (Array i) (Array i)
 array el sd = StaticDOM \n models updates -> do
   doc <- window >>= document
   e <- createElement el (htmlDocumentToDocument doc)
@@ -166,8 +180,8 @@ array el sd = StaticDOM \n models updates -> do
             childEvts <- unStaticDOM sd frag (here new_) (filterMap (\{old, new} -> { old: _, new: _ } <$> (old !! idx) <*> (new !! idx)) updates)
             _ <- childEvts `subscribe` \ev ->
               case ev of
-                Left (Left other) -> push (Left other)
-                Left (Right fi) -> push (Right (fi idx))
+                Left (Parent other) -> push (Left other)
+                Left (Here fi) -> push (Right (fi idx))
                 Right f -> push (Right (fromMaybe <*> modifyAt idx f))
             _ <- appendChild frag (elementToNode e)
             pure unit
