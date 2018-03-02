@@ -3,90 +3,70 @@ module Test.Main where
 import Prelude
 
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE)
 import Control.Monad.Eff.Exception (EXCEPTION, throw)
-import DOM (DOM)
+import Control.Monad.Eff.Ref (REF)
 import DOM.HTML (window)
 import DOM.HTML.Types (htmlDocumentToNonElementParentNode)
 import DOM.HTML.Window (document)
 import DOM.Node.NonElementParentNode (getElementById)
-import Data.Array (deleteAt, length, updateAt, (!!), (..), (:))
-import Data.Lens (lens')
+import Data.Array (deleteAt, (:))
+import Data.Either (Either(..))
 import Data.Lens.Record (prop)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Newtype (wrap)
 import Data.StrMap (empty, singleton)
 import Data.Symbol (SProxy(..))
-import Data.Tuple (Tuple(..))
-import StaticDOM (StaticDOM, element, element_, runStaticDOM, text)
+import StaticDOM (StaticDOM, SDFX, array, element, element_, runStaticDOM, text)
 import Unsafe.Coerce (unsafeCoerce)
 
-array
-  :: forall a
-   . Int
-  -> a
-  -> (Int -> StaticDOM a a)
-  -> StaticDOM (Array a) (Array a)
-array n dflt f =
+arrayOfInputs
+  :: forall eff a e
+   . a
+  -> StaticDOM (SDFX eff) (Either e (Int -> Array a -> Array a)) a a
+  -> StaticDOM (SDFX eff) e (Array a) (Array a)
+arrayOfInputs dflt f =
     element_ "div"
       [ addButton
-      , element_ "ol" (map toChild (0 .. (n - 1)))
+      , array "ol" li
       ]
   where
-    toChild idx =
+    li =
       element "li"
-        (singleton "style" \xs ->
-          if idx < length xs
-            then ""
-            else "display: none")
         empty
-        [ lens' (at idx) (f idx)
-        , removeButton idx
+        empty
+        [ f
+        , removeButton
         ]
 
     addButton =
       element "button"
-        (singleton "style" \xs ->
-          if length xs >= n
-            then "display: none"
-            else "")
-        (singleton "click" \_ xs -> dflt : xs)
+        empty
+        (singleton "click" \_ -> pure \xs -> dflt : xs)
         [ text \_ -> "+ Add" ]
 
-    removeButton idx =
+    removeButton =
       element "button"
         empty
-        (singleton "click" \_ xs ->
-          fromMaybe xs (deleteAt idx xs))
+        (singleton "click" \_ -> (Left (Right \i -> fromMaybe <*> deleteAt i)))
         [ text \_ -> "✕" ]
 
-    at idx xs =
-      Tuple (fromMaybe dflt (xs !! idx))
-            (\x -> fromMaybe xs (updateAt idx x xs))
-
-input :: StaticDOM String String
+input :: forall eff e. StaticDOM (SDFX eff) e String String
 input =
   element "input"
     (singleton "value" (\value -> value))
-    (singleton "change" \e _ -> (unsafeCoerce e).target.value)
+    (singleton "change" \e -> pure \_ -> (unsafeCoerce e).target.value)
     []
 
 type Model =
   { tasks :: Array String
   }
 
-view :: StaticDOM Model Model
+view :: forall eff. StaticDOM (SDFX eff) Void Model Model
 view = element_ "div"
-  [ prop (SProxy :: SProxy "tasks") (array 10 "" \_ -> input)
+  [ prop (SProxy :: SProxy "tasks") (arrayOfInputs "" input)
   ]
 
-type FX =
-  ( console :: CONSOLE
-  , dom :: DOM
-  , exception :: EXCEPTION
-  )
-
-main :: Eff FX Unit
+main :: Eff (SDFX (exception :: EXCEPTION, ref :: REF)) Unit
 main = do
   document <- map htmlDocumentToNonElementParentNode (window >>= document)
   container <- getElementById (wrap "container") document
