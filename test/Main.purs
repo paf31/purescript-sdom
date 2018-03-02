@@ -3,26 +3,27 @@ module Test.Main where
 import Prelude
 
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Exception (throw)
+import Control.Monad.Eff.Exception (EXCEPTION, throw)
+import Control.Monad.Eff.Ref (REF)
 import DOM.HTML (window)
 import DOM.HTML.Types (htmlDocumentToNonElementParentNode)
 import DOM.HTML.Window (document)
 import DOM.Node.NonElementParentNode (getElementById)
-import Data.Array (updateAt, (!!), (:))
+import Data.Array (deleteAt, (:))
+import Data.Either (Either(..))
 import Data.Lens.Record (prop)
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Newtype (wrap)
 import Data.StrMap (empty, singleton)
 import Data.Symbol (SProxy(..))
-import Data.Tuple (Tuple(..))
-import Lists (StaticDOM, array, element, element_, runStaticDOM, text)
+import StaticDOM (StaticDOM, SDFX, array, element, element_, runStaticDOM, text)
 import Unsafe.Coerce (unsafeCoerce)
 
 arrayOfInputs
-  :: forall a
+  :: forall eff a e
    . a
-  -> StaticDOM _ a a
-  -> StaticDOM _ (Array a) (Array a)
+  -> StaticDOM (SDFX eff) (Either e (Int -> Array a -> Array a)) a a
+  -> StaticDOM (SDFX eff) e (Array a) (Array a)
 arrayOfInputs dflt f =
     element_ "div"
       [ addButton
@@ -34,43 +35,38 @@ arrayOfInputs dflt f =
         empty
         empty
         [ f
-        -- , removeButton idx
+        , removeButton
         ]
 
     addButton =
       element "button"
         empty
-        (singleton "click" \_ xs -> dflt : xs)
+        (singleton "click" \_ -> pure \xs -> dflt : xs)
         [ text \_ -> "+ Add" ]
 
-    -- removeButton idx =
-    --   element "button"
-    --     empty
-    --     (singleton "click" \_ xs ->
-    --       fromMaybe xs (deleteAt idx xs))
-    --     [ text \_ -> "✕" ]
+    removeButton =
+      element "button"
+        empty
+        (singleton "click" \_ -> (Left (Right \i -> fromMaybe <*> deleteAt i)))
+        [ text \_ -> "✕" ]
 
-    at idx xs =
-      Tuple (fromMaybe dflt (xs !! idx))
-            (\x -> fromMaybe xs (updateAt idx x xs))
-
-input :: StaticDOM _ String String
+input :: forall eff e. StaticDOM (SDFX eff) e String String
 input =
   element "input"
     (singleton "value" (\value -> value))
-    (singleton "change" \e _ -> (unsafeCoerce e).target.value)
+    (singleton "change" \e -> pure \_ -> (unsafeCoerce e).target.value)
     []
 
 type Model =
   { tasks :: Array String
   }
 
-view :: StaticDOM _ Model Model
+view :: forall eff. StaticDOM (SDFX eff) Void Model Model
 view = element_ "div"
   [ prop (SProxy :: SProxy "tasks") (arrayOfInputs "" input)
   ]
 
-main :: Eff _ Unit
+main :: Eff (SDFX (exception :: EXCEPTION, ref :: REF)) Unit
 main = do
   document <- map htmlDocumentToNonElementParentNode (window >>= document)
   container <- getElementById (wrap "container") document
