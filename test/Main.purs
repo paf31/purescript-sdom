@@ -5,105 +5,106 @@ import Prelude
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Exception (EXCEPTION, throw)
 import Control.Monad.Eff.Ref (REF)
+import DOM (DOM)
 import DOM.HTML (window)
 import DOM.HTML.Types (htmlDocumentToNonElementParentNode)
 import DOM.HTML.Window (document)
 import DOM.Node.NonElementParentNode (getElementById)
 import Data.Array (deleteAt, filter, length, (:))
 import Data.Either (Either(..))
+import Data.Foldable (maximum)
+import Data.Lens (Lens', set, view)
 import Data.Lens.Record (prop)
-import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Maybe (Maybe(..), fromMaybe, maybe)
 import Data.Newtype (wrap)
 import Data.Profunctor (dimap)
 import Data.StrMap (empty, fromFoldable, singleton)
 import Data.Symbol (SProxy(..))
 import Data.Tuple (Tuple(..))
-import StaticDOM (ArrayChannel(..), Attr(..), SDFX, StaticDOM, array, element, element_, runStaticDOM, text)
+import FRP (FRP)
+import StaticDOM (ArrayChannel(..), Attr(..), StaticDOM, ArrayContext, array, runStaticDOM, text)
+import StaticDOM.Elements (button, div_, h1_, input, label, li_, p_, span_)
 import Unsafe.Coerce (unsafeCoerce)
-
-input :: forall eff ch. StaticDOM (SDFX eff) ch String String
-input =
-  element "input"
-    (singleton "value" (\value -> StringAttr value))
-    (singleton "change" \e -> pure \_ -> (unsafeCoerce e).target.value)
-    []
 
 infix 4 Tuple as :=
 
+textbox :: forall ch ctx. StaticDOM ch ctx String String
+textbox =
+  input
+    (singleton "value" (\_ value -> StringAttr value))
+    (singleton "change" \_ e -> pure \_ -> (unsafeCoerce e).target.value)
+    []
+
 checkbox
-  :: forall eff model ch
-   . (model -> String)
-  -> (model -> Boolean)
-  -> (model -> Boolean -> model)
-  -> StaticDOM (SDFX eff) ch model model
-checkbox name getChecked setChecked =
-  element_ "span"
-    [ element "input"
-        (fromFoldable [ "type"    := \_     -> StringAttr "checkbox"
-                      , "checked" := \model -> BooleanAttr (getChecked model)
-                      , "id"      := \model -> StringAttr (name model)
+  :: forall model ch ctx
+   . (ctx -> model -> String)
+  -> Lens' model Boolean
+  -> StaticDOM ch ctx model model
+checkbox name _checked =
+  span_
+    [ input
+        (fromFoldable [ "type"    := \_   _     -> StringAttr "checkbox"
+                      , "checked" := \_   model -> BooleanAttr (view _checked model)
+                      , "id"      := \ctx model -> StringAttr (name ctx model)
                       ])
-        (fromFoldable [ "change"  := \e -> pure \model -> setChecked model (unsafeCoerce e).target.checked
+        (fromFoldable [ "change"  := \_   e     -> pure \model -> set _checked (unsafeCoerce e).target.checked model
                       ])
         []
-    , element "label"
-        (fromFoldable [ "for"     := \model -> StringAttr (name model)
+    , label
+        (fromFoldable [ "for"     := \ctx model -> StringAttr (name ctx model)
                       ])
         empty
         []
     ]
 
 type Task =
-  { name :: String
-  , description :: String
+  { description :: String
   , completed :: Boolean
   }
 
-emptyTask :: String -> Task
-emptyTask name =
-  { name
-  , description: ""
+emptyTask :: Task
+emptyTask =
+  { description: ""
   , completed: false
   }
 
-task :: forall eff ch. StaticDOM (SDFX eff) ch Task Task
-task = element_ "span"
-  [ checkbox _.name _.completed (_ { completed = _ })
-  , prop (SProxy :: SProxy "description") input
+task :: forall ch ctx. StaticDOM ch (ArrayContext ctx) Task Task
+task = span_
+  [ checkbox
+      (\{ index } _ -> "task-" <> show index)
+      (prop (SProxy :: SProxy "completed"))
+  , prop (SProxy :: SProxy "description") textbox
   ]
 
 type TaskList =
   { tasks :: Array Task
   }
 
-taskList :: forall eff ch. StaticDOM (SDFX eff) ch TaskList TaskList
+taskList :: forall ch ctx. StaticDOM ch ctx TaskList TaskList
 taskList = dimap _.tasks { tasks: _ } $
-    element_ "div"
-      [ element_ "h1" [ text \_ -> "Task List" ]
+    div_
+      [ h1_ [ text \_ _ -> "Task List" ]
       , addButton
-      , array "ol" li
-      , element_ "p" [ text summaryLabel ]
+      , array "ol" taskLine
+      , p_ [ text \_ -> summaryLabel ]
       ]
   where
-    li =
-      element "li"
-        empty
-        empty
-        [ task
-        , removeButton
-        ]
+    taskLine =
+      li_ [ task
+          , removeButton
+          ]
 
     addButton =
-      element "button"
+      button
         empty
-        (singleton "click" \_ -> pure \xs -> emptyTask ("task" <> show (length xs)) : xs)
-        [ text \_ -> "+ Add" ]
+        (singleton "click" \_ _ -> pure \xs -> emptyTask : xs)
+        [ text \_ _ -> "+ Add" ]
 
     removeButton =
-      element "button"
+      button
         empty
-        (singleton "click" \_ -> Left (Here \idx -> fromMaybe <*> deleteAt idx))
-        [ text \_ -> "✕" ]
+        (singleton "click" \{ index } _ -> Left (Here (fromMaybe <*> deleteAt index)))
+        [ text \_ _ -> "✕" ]
 
     summaryLabel =
       filter _.completed
@@ -111,10 +112,15 @@ taskList = dimap _.tasks { tasks: _ } $
       >>> show
       >>> (_ <> " tasks completed.")
 
-main :: Eff (SDFX (exception :: EXCEPTION, ref :: REF)) Unit
+main :: Eff ( dom :: DOM
+            , exception :: EXCEPTION
+            , frp :: FRP
+            , ref :: REF
+            ) Unit
 main = do
   document <- map htmlDocumentToNonElementParentNode (window >>= document)
   container <- getElementById (wrap "container") document
   case container of
-    Just el -> runStaticDOM el { tasks: [] } taskList
+    Just el -> void do
+      runStaticDOM el { tasks: [] } taskList
     Nothing -> throw "No 'container' node!"
