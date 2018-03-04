@@ -67,12 +67,16 @@ emptyTask =
   , completed: false
   }
 
-task :: forall ch ctx. StaticDOM ch (ArrayContext ctx) Task Task
+task :: forall ch ctx. StaticDOM (ArrayChannel Task ch) (ArrayContext ctx) Task Task
 task = span_
   [ checkbox
       (\{ index } _ -> "task-" <> show index)
       (prop (SProxy :: SProxy "completed"))
   , prop (SProxy :: SProxy "description") textbox
+  , button
+      empty
+      (singleton "click" \{ index } _ -> Left (Here (fromMaybe <*> deleteAt index)))
+      [ text \_ _ -> "✕" ]
   ]
 
 type TaskList =
@@ -83,28 +87,14 @@ taskList :: forall ch ctx. StaticDOM ch ctx TaskList TaskList
 taskList = dimap _.tasks { tasks: _ } $
     div_
       [ h1_ [ text \_ _ -> "Task List" ]
-      , addButton
-      , array "ol" taskLine
+      , button
+          empty
+          (singleton "click" \_ _ -> pure \xs -> xs <> [emptyTask])
+          [ text \_ _ -> "＋ New Task" ]
+      , array "ol" (li_ [ task ])
       , p_ [ text \_ -> summaryLabel ]
       ]
   where
-    taskLine =
-      li_ [ task
-          , removeButton
-          ]
-
-    addButton =
-      button
-        empty
-        (singleton "click" \_ _ -> pure \xs -> xs <> [emptyTask])
-        [ text \_ _ -> "+ Add" ]
-
-    removeButton =
-      button
-        empty
-        (singleton "click" \{ index } _ -> Left (Here (fromMaybe <*> deleteAt index)))
-        [ text \_ _ -> "✕" ]
-
     summaryLabel =
       filter _.completed
       >>> length
