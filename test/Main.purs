@@ -10,12 +10,11 @@ import DOM.HTML (window)
 import DOM.HTML.Types (htmlDocumentToNonElementParentNode)
 import DOM.HTML.Window (document)
 import DOM.Node.NonElementParentNode (getElementById)
-import Data.Array (deleteAt, filter, length, (:))
+import Data.Array (deleteAt, filter, length)
 import Data.Either (Either(..))
-import Data.Foldable (maximum)
 import Data.Lens (Lens', set, view)
 import Data.Lens.Record (prop)
-import Data.Maybe (Maybe(..), fromMaybe, maybe)
+import Data.Maybe (Maybe(Nothing, Just), fromMaybe)
 import Data.Newtype (wrap)
 import Data.Profunctor (dimap)
 import Data.StrMap (empty, fromFoldable, singleton)
@@ -97,7 +96,7 @@ taskList = dimap _.tasks { tasks: _ } $
     addButton =
       button
         empty
-        (singleton "click" \_ _ -> pure \xs -> emptyTask : xs)
+        (singleton "click" \_ _ -> pure \xs -> xs <> [emptyTask])
         [ text \_ _ -> "+ Add" ]
 
     removeButton =
