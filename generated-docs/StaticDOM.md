@@ -16,20 +16,73 @@ Strong (StaticDOM ch ctx)
 #### `Attr`
 
 ``` purescript
-data Attr
-  = StringAttr String
-  | BooleanAttr Boolean
+newtype Attr model
 ```
 
-##### Instances
+#### `checked`
+
 ``` purescript
-Eq Attr
+checked :: forall model. (model -> Boolean) -> Attr model
+```
+
+#### `disabled`
+
+``` purescript
+disabled :: forall model. (model -> Boolean) -> Attr model
+```
+
+#### `for`
+
+``` purescript
+for :: forall model. (model -> String) -> Attr model
+```
+
+#### `id_`
+
+``` purescript
+id_ :: forall model. (model -> String) -> Attr model
+```
+
+#### `name`
+
+``` purescript
+name :: forall model. (model -> String) -> Attr model
+```
+
+#### `type_`
+
+``` purescript
+type_ :: forall model. (model -> String) -> Attr model
+```
+
+#### `value`
+
+``` purescript
+value :: forall model. (model -> String) -> Attr model
+```
+
+#### `Handler`
+
+``` purescript
+newtype Handler e
+```
+
+#### `change`
+
+``` purescript
+change :: forall e. (Event -> e) -> Handler e
+```
+
+#### `click`
+
+``` purescript
+click :: forall e. (Event -> e) -> Handler e
 ```
 
 #### `element`
 
 ``` purescript
-element :: forall ch ctx i o. String -> StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+element :: forall ch ctx i o. String -> Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `element_`

@@ -3,7 +3,7 @@
 #### `a`
 
 ``` purescript
-a :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+a :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `a_`
@@ -15,7 +15,7 @@ a_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `abbr`
 
 ``` purescript
-abbr :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+abbr :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `abbr_`
@@ -27,7 +27,7 @@ abbr_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `acronym`
 
 ``` purescript
-acronym :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+acronym :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `acronym_`
@@ -39,7 +39,7 @@ acronym_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx 
 #### `address`
 
 ``` purescript
-address :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+address :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `address_`
@@ -51,7 +51,7 @@ address_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx 
 #### `applet`
 
 ``` purescript
-applet :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+applet :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `applet_`
@@ -63,7 +63,7 @@ applet_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `area`
 
 ``` purescript
-area :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+area :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `area_`
@@ -75,7 +75,7 @@ area_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `article`
 
 ``` purescript
-article :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+article :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `article_`
@@ -87,7 +87,7 @@ article_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx 
 #### `aside`
 
 ``` purescript
-aside :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+aside :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `aside_`
@@ -99,7 +99,7 @@ aside_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `audio`
 
 ``` purescript
-audio :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+audio :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `audio_`
@@ -111,7 +111,7 @@ audio_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `b`
 
 ``` purescript
-b :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+b :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `b_`
@@ -123,7 +123,7 @@ b_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `base`
 
 ``` purescript
-base :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+base :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `base_`
@@ -135,7 +135,7 @@ base_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `basefont`
 
 ``` purescript
-basefont :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+basefont :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `basefont_`
@@ -147,7 +147,7 @@ basefont_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx
 #### `bdi`
 
 ``` purescript
-bdi :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+bdi :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `bdi_`
@@ -159,7 +159,7 @@ bdi_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `bdo`
 
 ``` purescript
-bdo :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+bdo :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `bdo_`
@@ -171,7 +171,7 @@ bdo_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `big`
 
 ``` purescript
-big :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+big :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `big_`
@@ -183,7 +183,7 @@ big_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `blockquote`
 
 ``` purescript
-blockquote :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+blockquote :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `blockquote_`
@@ -195,7 +195,7 @@ blockquote_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch c
 #### `body`
 
 ``` purescript
-body :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+body :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `body_`
@@ -207,7 +207,7 @@ body_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `br`
 
 ``` purescript
-br :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+br :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `br_`
@@ -219,7 +219,7 @@ br_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `button`
 
 ``` purescript
-button :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+button :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `button_`
@@ -231,7 +231,7 @@ button_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `canvas`
 
 ``` purescript
-canvas :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+canvas :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `canvas_`
@@ -243,7 +243,7 @@ canvas_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `caption`
 
 ``` purescript
-caption :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+caption :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `caption_`
@@ -255,7 +255,7 @@ caption_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx 
 #### `center`
 
 ``` purescript
-center :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+center :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `center_`
@@ -267,7 +267,7 @@ center_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `cite`
 
 ``` purescript
-cite :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+cite :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `cite_`
@@ -279,7 +279,7 @@ cite_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `code`
 
 ``` purescript
-code :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+code :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `code_`
@@ -291,7 +291,7 @@ code_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `col`
 
 ``` purescript
-col :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+col :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `col_`
@@ -303,7 +303,7 @@ col_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `colgroup`
 
 ``` purescript
-colgroup :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+colgroup :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `colgroup_`
@@ -315,7 +315,7 @@ colgroup_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx
 #### `datalist`
 
 ``` purescript
-datalist :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+datalist :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `datalist_`
@@ -327,7 +327,7 @@ datalist_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx
 #### `dd`
 
 ``` purescript
-dd :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+dd :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `dd_`
@@ -339,7 +339,7 @@ dd_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `del`
 
 ``` purescript
-del :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+del :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `del_`
@@ -351,7 +351,7 @@ del_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `details`
 
 ``` purescript
-details :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+details :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `details_`
@@ -363,7 +363,7 @@ details_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx 
 #### `dfn`
 
 ``` purescript
-dfn :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+dfn :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `dfn_`
@@ -375,7 +375,7 @@ dfn_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `dialog`
 
 ``` purescript
-dialog :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+dialog :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `dialog_`
@@ -387,7 +387,7 @@ dialog_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `dir`
 
 ``` purescript
-dir :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+dir :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `dir_`
@@ -399,7 +399,7 @@ dir_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `div`
 
 ``` purescript
-div :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+div :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `div_`
@@ -411,7 +411,7 @@ div_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `dl`
 
 ``` purescript
-dl :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+dl :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `dl_`
@@ -423,7 +423,7 @@ dl_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `dt`
 
 ``` purescript
-dt :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+dt :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `dt_`
@@ -435,7 +435,7 @@ dt_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `em`
 
 ``` purescript
-em :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+em :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `em_`
@@ -447,7 +447,7 @@ em_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `embed`
 
 ``` purescript
-embed :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+embed :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `embed_`
@@ -459,7 +459,7 @@ embed_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `fieldset`
 
 ``` purescript
-fieldset :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+fieldset :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `fieldset_`
@@ -471,7 +471,7 @@ fieldset_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx
 #### `figcaption`
 
 ``` purescript
-figcaption :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+figcaption :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `figcaption_`
@@ -483,7 +483,7 @@ figcaption_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch c
 #### `figure`
 
 ``` purescript
-figure :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+figure :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `figure_`
@@ -495,7 +495,7 @@ figure_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `font`
 
 ``` purescript
-font :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+font :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `font_`
@@ -507,7 +507,7 @@ font_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `footer`
 
 ``` purescript
-footer :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+footer :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `footer_`
@@ -519,7 +519,7 @@ footer_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `form`
 
 ``` purescript
-form :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+form :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `form_`
@@ -531,7 +531,7 @@ form_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `frame`
 
 ``` purescript
-frame :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+frame :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `frame_`
@@ -543,7 +543,7 @@ frame_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `frameset`
 
 ``` purescript
-frameset :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+frameset :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `frameset_`
@@ -555,7 +555,7 @@ frameset_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx
 #### `h1`
 
 ``` purescript
-h1 :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+h1 :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `h1_`
@@ -567,7 +567,7 @@ h1_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `head`
 
 ``` purescript
-head :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+head :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `head_`
@@ -579,7 +579,7 @@ head_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `header`
 
 ``` purescript
-header :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+header :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `header_`
@@ -591,7 +591,7 @@ header_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `hr`
 
 ``` purescript
-hr :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+hr :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `hr_`
@@ -603,7 +603,7 @@ hr_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `html`
 
 ``` purescript
-html :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+html :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `html_`
@@ -615,7 +615,7 @@ html_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `i`
 
 ``` purescript
-i :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+i :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `i_`
@@ -627,7 +627,7 @@ i_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `iframe`
 
 ``` purescript
-iframe :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+iframe :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `iframe_`
@@ -639,7 +639,7 @@ iframe_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `img`
 
 ``` purescript
-img :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+img :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `img_`
@@ -651,7 +651,7 @@ img_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `input`
 
 ``` purescript
-input :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+input :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `input_`
@@ -663,7 +663,7 @@ input_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `ins`
 
 ``` purescript
-ins :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+ins :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `ins_`
@@ -675,7 +675,7 @@ ins_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `kbd`
 
 ``` purescript
-kbd :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+kbd :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `kbd_`
@@ -687,7 +687,7 @@ kbd_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `label`
 
 ``` purescript
-label :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+label :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `label_`
@@ -699,7 +699,7 @@ label_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `legend`
 
 ``` purescript
-legend :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+legend :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `legend_`
@@ -711,7 +711,7 @@ legend_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `li`
 
 ``` purescript
-li :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+li :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `li_`
@@ -723,7 +723,7 @@ li_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `link`
 
 ``` purescript
-link :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+link :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `link_`
@@ -735,7 +735,7 @@ link_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `main`
 
 ``` purescript
-main :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+main :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `main_`
@@ -747,7 +747,7 @@ main_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `map`
 
 ``` purescript
-map :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+map :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `map_`
@@ -759,7 +759,7 @@ map_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `mark`
 
 ``` purescript
-mark :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+mark :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `mark_`
@@ -771,7 +771,7 @@ mark_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `menu`
 
 ``` purescript
-menu :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+menu :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `menu_`
@@ -783,7 +783,7 @@ menu_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `menuitem`
 
 ``` purescript
-menuitem :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+menuitem :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `menuitem_`
@@ -795,7 +795,7 @@ menuitem_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx
 #### `meta`
 
 ``` purescript
-meta :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+meta :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `meta_`
@@ -807,7 +807,7 @@ meta_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `meter`
 
 ``` purescript
-meter :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+meter :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `meter_`
@@ -819,7 +819,7 @@ meter_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `nav`
 
 ``` purescript
-nav :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+nav :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `nav_`
@@ -831,7 +831,7 @@ nav_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `noframes`
 
 ``` purescript
-noframes :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+noframes :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `noframes_`
@@ -843,7 +843,7 @@ noframes_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx
 #### `noscript`
 
 ``` purescript
-noscript :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+noscript :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `noscript_`
@@ -855,7 +855,7 @@ noscript_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx
 #### `object`
 
 ``` purescript
-object :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+object :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `object_`
@@ -867,7 +867,7 @@ object_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `ol`
 
 ``` purescript
-ol :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+ol :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `ol_`
@@ -879,7 +879,7 @@ ol_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `optgroup`
 
 ``` purescript
-optgroup :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+optgroup :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `optgroup_`
@@ -891,7 +891,7 @@ optgroup_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx
 #### `option`
 
 ``` purescript
-option :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+option :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `option_`
@@ -903,7 +903,7 @@ option_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `output`
 
 ``` purescript
-output :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+output :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `output_`
@@ -915,7 +915,7 @@ output_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `p`
 
 ``` purescript
-p :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+p :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `p_`
@@ -927,7 +927,7 @@ p_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `param`
 
 ``` purescript
-param :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+param :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `param_`
@@ -939,7 +939,7 @@ param_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `picture`
 
 ``` purescript
-picture :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+picture :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `picture_`
@@ -951,7 +951,7 @@ picture_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx 
 #### `pre`
 
 ``` purescript
-pre :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+pre :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `pre_`
@@ -963,7 +963,7 @@ pre_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `progress`
 
 ``` purescript
-progress :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+progress :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `progress_`
@@ -975,7 +975,7 @@ progress_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx
 #### `q`
 
 ``` purescript
-q :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+q :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `q_`
@@ -987,7 +987,7 @@ q_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `rp`
 
 ``` purescript
-rp :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+rp :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `rp_`
@@ -999,7 +999,7 @@ rp_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `rt`
 
 ``` purescript
-rt :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+rt :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `rt_`
@@ -1011,7 +1011,7 @@ rt_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `ruby`
 
 ``` purescript
-ruby :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+ruby :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `ruby_`
@@ -1023,7 +1023,7 @@ ruby_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `s`
 
 ``` purescript
-s :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+s :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `s_`
@@ -1035,7 +1035,7 @@ s_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `samp`
 
 ``` purescript
-samp :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+samp :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `samp_`
@@ -1047,7 +1047,7 @@ samp_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `script`
 
 ``` purescript
-script :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+script :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `script_`
@@ -1059,7 +1059,7 @@ script_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `section`
 
 ``` purescript
-section :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+section :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `section_`
@@ -1071,7 +1071,7 @@ section_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx 
 #### `select`
 
 ``` purescript
-select :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+select :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `select_`
@@ -1083,7 +1083,7 @@ select_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `small`
 
 ``` purescript
-small :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+small :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `small_`
@@ -1095,7 +1095,7 @@ small_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `source`
 
 ``` purescript
-source :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+source :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `source_`
@@ -1107,7 +1107,7 @@ source_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `span`
 
 ``` purescript
-span :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+span :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `span_`
@@ -1119,7 +1119,7 @@ span_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `strike`
 
 ``` purescript
-strike :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+strike :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `strike_`
@@ -1131,7 +1131,7 @@ strike_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `strong`
 
 ``` purescript
-strong :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+strong :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `strong_`
@@ -1143,7 +1143,7 @@ strong_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i
 #### `style`
 
 ``` purescript
-style :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+style :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `style_`
@@ -1155,7 +1155,7 @@ style_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `sub`
 
 ``` purescript
-sub :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+sub :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `sub_`
@@ -1167,7 +1167,7 @@ sub_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `summary`
 
 ``` purescript
-summary :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+summary :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `summary_`
@@ -1179,7 +1179,7 @@ summary_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx 
 #### `sup`
 
 ``` purescript
-sup :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+sup :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `sup_`
@@ -1191,7 +1191,7 @@ sup_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `table`
 
 ``` purescript
-table :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+table :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `table_`
@@ -1203,7 +1203,7 @@ table_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `tbody`
 
 ``` purescript
-tbody :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+tbody :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `tbody_`
@@ -1215,7 +1215,7 @@ tbody_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `td`
 
 ``` purescript
-td :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+td :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `td_`
@@ -1227,7 +1227,7 @@ td_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `template`
 
 ``` purescript
-template :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+template :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `template_`
@@ -1239,7 +1239,7 @@ template_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx
 #### `textarea`
 
 ``` purescript
-textarea :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+textarea :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `textarea_`
@@ -1251,7 +1251,7 @@ textarea_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx
 #### `tfoot`
 
 ``` purescript
-tfoot :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+tfoot :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `tfoot_`
@@ -1263,7 +1263,7 @@ tfoot_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `th`
 
 ``` purescript
-th :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+th :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `th_`
@@ -1275,7 +1275,7 @@ th_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `thead`
 
 ``` purescript
-thead :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+thead :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `thead_`
@@ -1287,7 +1287,7 @@ thead_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `time`
 
 ``` purescript
-time :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+time :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `time_`
@@ -1299,7 +1299,7 @@ time_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `title`
 
 ``` purescript
-title :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+title :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `title_`
@@ -1311,7 +1311,7 @@ title_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `tr`
 
 ``` purescript
-tr :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+tr :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `tr_`
@@ -1323,7 +1323,7 @@ tr_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `track`
 
 ``` purescript
-track :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+track :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `track_`
@@ -1335,7 +1335,7 @@ track_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `tt`
 
 ``` purescript
-tt :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+tt :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `tt_`
@@ -1347,7 +1347,7 @@ tt_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `u`
 
 ``` purescript
-u :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+u :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `u_`
@@ -1359,7 +1359,7 @@ u_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `ul`
 
 ``` purescript
-ul :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+ul :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `ul_`
@@ -1371,7 +1371,7 @@ ul_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `var`
 
 ``` purescript
-var :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+var :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `var_`
@@ -1383,7 +1383,7 @@ var_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 #### `video`
 
 ``` purescript
-video :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+video :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `video_`
@@ -1395,7 +1395,7 @@ video_ :: forall ch ctx i o. Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i 
 #### `wbr`
 
 ``` purescript
-wbr :: forall ch ctx i o. StrMap (ctx -> i -> Attr) -> StrMap (ctx -> Event -> Either ch (i -> o)) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
+wbr :: forall ch ctx i o. Array (ctx -> Attr i) -> Array (ctx -> Handler (Either ch (i -> o))) -> Array (StaticDOM ch ctx i o) -> StaticDOM ch ctx i o
 ```
 
 #### `wbr_`

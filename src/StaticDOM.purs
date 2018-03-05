@@ -1,6 +1,16 @@
 module StaticDOM
   ( StaticDOM
-  , Attr(..)
+  , Attr
+  , checked
+  , disabled
+  , for
+  , id_
+  , name
+  , type_
+  , value
+  , Handler
+  , change
+  , click
   , element
   , element_
   , ArrayChannel(..)
@@ -35,9 +45,7 @@ import Data.Maybe (Maybe(..), fromMaybe)
 import Data.Newtype (wrap)
 import Data.Profunctor (class Profunctor, dimap)
 import Data.Profunctor.Strong (class Strong, first, second)
-import Data.StrMap as StrMap
 import Data.Traversable (traverse)
-import Data.TraversableWithIndex (traverseWithIndex)
 import Data.Tuple (Tuple(..), fst, snd)
 import FRP (FRP)
 import FRP.Event (Event, create, subscribe)
@@ -101,24 +109,117 @@ text f = StaticDOM \n ctx model e -> do
       setTextContent newValue (textToNode tn)
   pure { unsubscribe, events: empty }
 
-data Attr
-  = StringAttr String
-  | BooleanAttr Boolean
+newtype Attr model = Attr
+  (forall eff. Element ->
+     { init :: model -> Eff (dom :: DOM | eff) Unit
+     , update :: { old :: model, new :: model } -> Eff (dom :: DOM | eff) Unit
+     })
 
-derive instance eqAttr :: Eq Attr
+attr :: forall model. String -> (model -> String) -> Attr model
+attr attrName f =
+  Attr \e ->
+    { init: \model -> setAttribute attrName (f model) e
+    , update: \{ old, new } -> do
+        let oldValue = f old
+            newValue = f new
+        when (oldValue /= newValue) (setAttribute attrName newValue e)
+    }
 
-element_
-  :: forall ch ctx i o
+for :: forall model. (model -> String) -> Attr model
+for = attr "for"
+
+id_ :: forall model. (model -> String) -> Attr model
+id_ = attr "id"
+
+name :: forall model. (model -> String) -> Attr model
+name = attr "name"
+
+type_ :: forall model. (model -> String) -> Attr model
+type_ = attr "type"
+
+value :: forall model. (model -> String) -> Attr model
+value f =
+  Attr \e ->
+    let update s = do
+          setValue s (unsafeCoerce e)
+          setAttribute "value" s e
+     in { init: \model -> update (f model)
+        , update: \{ old, new } -> do
+            let oldValue = f old
+                newValue = f new
+            when (oldValue /= newValue) (update newValue)
+        }
+
+checked :: forall model. (model -> Boolean) -> Attr model
+checked f =
+  Attr \e ->
+    let update b = do
+          setChecked b (unsafeCoerce e)
+          if b then setAttribute "checked" "checked" e
+               else removeAttribute "checked" e
+     in { init: \model -> update (f model)
+        , update: \{ old, new } -> do
+            let oldValue = f old
+                newValue = f new
+            when (oldValue /= newValue) (update newValue)
+        }
+
+disabled :: forall model. (model -> Boolean) -> Attr model
+disabled f =
+  Attr \e ->
+    let update b = do
+          setDisabled b (unsafeCoerce e)
+          if b then setAttribute "disabled" "disabled" e
+               else removeAttribute "disabled" e
+     in { init: \model -> update (f model)
+        , update: \{ old, new } -> do
+            let oldValue = f old
+                newValue = f new
+            when (oldValue /= newValue) (update newValue)
+        }
+
+newtype Handler e = Handler
+  (forall eff
+   . Element
+  -> Eff (frp :: FRP, dom :: DOM | eff)
+       { events :: Event e
+       , unsubscribe :: Eff (frp :: FRP, dom :: DOM | eff) Unit
+       }
+  )
+
+handler
+  :: forall e
    . String
-  -> Array (StaticDOM ch ctx i o)
-  -> StaticDOM ch ctx i o
-element_ el = element el StrMap.empty StrMap.empty
+  -> (Event.Event -> e)
+  -> Handler e
+handler evtName f = Handler \e -> do
+  { event, push } <- create
+  let listener = eventListener (push <<< f)
+      target = elementToEventTarget e
+      unsubscribe = removeEventListener (wrap evtName) listener false target
+  addEventListener (wrap evtName) listener false target
+  pure
+    { events: event
+    , unsubscribe
+    }
+
+change
+  :: forall e
+   . (Event.Event -> e)
+  -> Handler e
+change = handler "change"
+
+click
+  :: forall e
+   . (Event.Event -> e)
+  -> Handler e
+click = handler "click"
 
 element
   :: forall ch ctx i o
    . String
-  -> StrMap.StrMap (ctx -> i -> Attr)
-  -> StrMap.StrMap (ctx -> Event.Event -> Either ch (i -> o))
+  -> Array (ctx -> Attr i)
+  -> Array (ctx -> Handler (Either ch (i -> o)))
   -> Array (StaticDOM ch ctx i o)
   -> StaticDOM ch ctx i o
 element el attrs handlers children = StaticDOM \n ctx model updates -> do
@@ -127,51 +228,27 @@ element el attrs handlers children = StaticDOM \n ctx model updates -> do
   _ <- appendChild (elementToNode e) n
   let setAttr
         :: forall eff
-         . String
-        -> (ctx -> i -> Attr)
+         . (ctx -> Attr i)
         -> Eff (frp :: FRP, dom :: DOM | eff)
              (Eff (frp :: FRP, dom :: DOM | eff) Unit)
-      setAttr attrName f = do
-        let go = case _ of
-                   StringAttr s -> do
-                     case attrName of
-                       "value" -> setValue s (unsafeCoerce e)
-                       _ -> pure unit
-                     setAttribute attrName s e
-                   BooleanAttr b -> do
-                     case attrName of
-                       "checked" -> setChecked b (unsafeCoerce e)
-                       "disabled" -> setDisabled b (unsafeCoerce e)
-                       _ -> pure unit
-                     if b then setAttribute attrName attrName e
-                          else removeAttribute attrName e
-        go (f ctx model)
-        updates `subscribe` \{ old, new } -> do
-          let oldValue = f ctx old
-              newValue = f ctx new
-          when (oldValue /= newValue) $
-            go newValue
+      setAttr f = do
+        let Attr attr = f ctx
+            { init, update } = attr e
+        init model
+        updates `subscribe` update
 
       setHandler
         :: forall eff
-         . String
-        -> (ctx -> Event.Event -> Either ch (i -> o))
+         . (ctx -> Handler (Either ch (i -> o)))
         -> Eff (frp :: FRP, dom :: DOM | eff)
              { events :: Event (Either ch (i -> o))
              , unsubscribe :: Eff (frp :: FRP, dom :: DOM | eff) Unit
              }
-      setHandler evtName f = do
-        { event, push } <- create
-        let listener = eventListener (push <<< f ctx)
-            target = elementToEventTarget e
-            unsubscribe = removeEventListener (wrap evtName) listener false target
-        addEventListener (wrap evtName) listener false target
-        pure
-          { events: event
-          , unsubscribe
-          }
-  unsubcribers <- traverseWithIndex setAttr attrs
-  evts <- traverseWithIndex setHandler handlers
+      setHandler f = do
+        let Handler handler = f ctx
+        handler e
+  unsubcribers <- traverse setAttr attrs
+  evts <- traverse setHandler handlers
   childrenEvts <- traverse (\child -> unStaticDOM child (elementToNode e) ctx model updates) children
   pure
     { events:
@@ -182,6 +259,13 @@ element el attrs handlers children = StaticDOM \n ctx model updates -> do
           *> traverse_ _.unsubscribe evts
           *> traverse_ _.unsubscribe childrenEvts
     }
+
+element_
+  :: forall ch ctx i o
+   . String
+  -> Array (StaticDOM ch ctx i o)
+  -> StaticDOM ch ctx i o
+element_ el = element el [] []
 
 removeLastNChildren :: forall eff. Int -> Node -> Eff (dom :: DOM | eff) Unit
 removeLastNChildren m n = tailRecM loop m where

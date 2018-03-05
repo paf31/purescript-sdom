@@ -17,11 +17,11 @@ import Data.Lens.Record (prop)
 import Data.Maybe (Maybe(Nothing, Just), fromMaybe)
 import Data.Newtype (wrap)
 import Data.Profunctor (dimap)
-import Data.StrMap (empty, fromFoldable, singleton)
 import Data.Symbol (SProxy(..))
 import Data.Tuple (Tuple(..))
 import FRP (FRP)
-import StaticDOM (ArrayChannel(..), Attr(..), StaticDOM, ArrayContext, array, runStaticDOM, text)
+import StaticDOM (ArrayChannel(..), ArrayContext, StaticDOM, array, change,
+                  checked, click, for, id_, runStaticDOM, text, type_, value)
 import StaticDOM.Elements (button, div_, h1_, input, label, li_, p_, span_)
 import Unsafe.Coerce (unsafeCoerce)
 
@@ -30,8 +30,8 @@ infix 4 Tuple as :=
 textbox :: forall ch ctx. StaticDOM ch ctx String String
 textbox =
   input
-    (singleton "value" (\_ value -> StringAttr value))
-    (singleton "change" \_ e -> pure \_ -> (unsafeCoerce e).target.value)
+    [ \_ -> value \val -> val ]
+    [ \_ -> change \e -> pure \_ -> (unsafeCoerce e).target.value ]
     []
 
 checkbox
@@ -42,17 +42,17 @@ checkbox
 checkbox name _checked =
   span_
     [ input
-        (fromFoldable [ "type"    := \_   _     -> StringAttr "checkbox"
-                      , "checked" := \_   model -> BooleanAttr (view _checked model)
-                      , "id"      := \ctx model -> StringAttr (name ctx model)
-                      ])
-        (fromFoldable [ "change"  := \_   e     -> pure \model -> set _checked (unsafeCoerce e).target.checked model
-                      ])
+        [ \_   -> type_   \_     -> "checkbox"
+        , \_   -> checked \model -> view _checked model
+        , \ctx -> id_     \model -> name ctx model
+        ]
+        [ \_   -> change  \e     -> pure \model ->
+            set _checked (unsafeCoerce e).target.checked model
+        ]
         []
     , label
-        (fromFoldable [ "for"     := \ctx model -> StringAttr (name ctx model)
-                      ])
-        empty
+        [ \ctx -> for \model -> name ctx model ]
+        []
         []
     ]
 
@@ -74,8 +74,8 @@ task = span_
       (prop (SProxy :: SProxy "completed"))
   , prop (SProxy :: SProxy "description") textbox
   , button
-      empty
-      (singleton "click" \{ index } _ -> Left (Here (fromMaybe <*> deleteAt index)))
+      []
+      [ \{ index } -> click \_ -> Left (Here (fromMaybe <*> deleteAt index)) ]
       [ text \_ _ -> "✕" ]
   ]
 
@@ -88,8 +88,8 @@ taskList = dimap _.tasks { tasks: _ } $
     div_
       [ h1_ [ text \_ _ -> "Task List" ]
       , button
-          empty
-          (singleton "click" \_ _ -> pure \xs -> xs <> [emptyTask])
+          []
+          [ \_ -> click \_ -> pure \xs -> xs <> [emptyTask] ]
           [ text \_ _ -> "＋ New Task" ]
       , array "ol" (li_ [ task ])
       , p_ [ text \_ -> summaryLabel ]
