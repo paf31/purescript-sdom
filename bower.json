@@ -6,6 +6,11 @@
     "bower_components",
     "output"
   ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/paf31/purescript-sdom.git"
+  },
   "dependencies": {
     "purescript-dom": "^4.13.2",
     "purescript-behaviors": "^6.3.0",
