@@ -1,5 +1,5 @@
 {
-  "name": "purescript-static-dom",
+  "name": "purescript-sdom",
   "ignore": [
     "**/.*",
     "node_modules",
@@ -7,12 +7,13 @@
     "output"
   ],
   "dependencies": {
-    "purescript-prelude": "^3.1.1",
-    "purescript-maps": "^3.6.0",
     "purescript-dom": "^4.13.2",
-    "purescript-profunctor-lenses": "^3.8.0",
-    "purescript-console": "^3.0.0",
-    "purescript-behaviors": "^6.3.0"
+    "purescript-behaviors": "^6.3.0",
+    "purescript-profunctor": "^3.2.0",
+    "purescript-refs": "^3.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "purescript-profunctor-lenses": "^3.8.0",
+    "purescript-psci-support": "^3.0.0"
+  }
 }
