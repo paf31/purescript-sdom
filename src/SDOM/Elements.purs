@@ -127,7 +127,7 @@ audio_
   :: forall channel context i o
    . Array (SDOM channel context i o)
   -> SDOM channel context i o
-audio_ = element_ "audich"
+audio_ = element_ "audio"
 
 b
   :: forall channel context i o
