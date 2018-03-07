@@ -24,4 +24,21 @@ can be connected to the label.
 The second and third arguments encapsulate the `checked` status of the
 checkbox as a getter/setter pair.
 
+#### `select`
+
+``` purescript
+select :: forall option channel context. (option -> { key :: String, label :: String }) -> (String -> option) -> Array option -> SDOM channel context option option
+```
+
+Render a select component.
+
+The first and second arguments encapsulate the selected option
+as a getter/setter pair on the model type.
+
+The third argument converts an option to a unique key and a rendered label.
+
+The fourth argument converts a key back into an option.
+
+The fifth argument is an array of all available options.
+
 

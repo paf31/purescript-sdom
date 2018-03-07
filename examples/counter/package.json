@@ -3,7 +3,7 @@
   "scripts": {
     "clean": "rimraf output && rimraf .pulp-cache",
     "build": "pulp build",
-    "example": "pulp build -I test -O --main Test.Main > html/index.js && open html/index.html"
+    "example": "pulp build -O --to html/index.js && open html/index.html"
   },
   "devDependencies": {
     "pulp": "^11.0.0",

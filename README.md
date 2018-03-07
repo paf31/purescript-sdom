@@ -2,7 +2,9 @@
 
 An experiment in replacing the virtual DOM and avoiding diffing.
 
-- [Task List Example](test/Main.purs)
+- [Counter Example](examples/counter)
+- [Select Example](examples/select)
+- [Task List Example](examples/todo)
 - [Module Documentation](generated-docs/)
 
 ## Motivation

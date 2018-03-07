@@ -1,0 +1,15 @@
+{
+  "name": "select",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "dependencies": {
+    "purescript-sdom": "../.."
+  },
+  "devDependencies": {
+    "purescript-psci-support": "^3.0.0"
+  }
+}

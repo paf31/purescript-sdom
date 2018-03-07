@@ -2,7 +2,7 @@ module SDOM.Components where
 
 import Prelude
 
-import SDOM (SDOM)
+import SDOM (SDOM, text)
 import SDOM.Attributes as A
 import SDOM.Elements as E
 import SDOM.Events as Events
@@ -47,3 +47,30 @@ checkbox name getChecked setChecked =
         []
         []
     ]
+
+-- | Render a select component.
+-- |
+-- | The first and second arguments encapsulate the selected option
+-- | as a getter/setter pair on the model type.
+-- |
+-- | The third argument converts an option to a unique key and a rendered label.
+-- |
+-- | The fourth argument converts a key back into an option.
+-- |
+-- | The fifth argument is an array of all available options.
+select
+  :: forall option channel context
+   . (option -> { key :: String, label :: String })
+  -> (String -> option)
+  -> Array option
+  -> SDOM channel context option option
+select fromOption toOption options =
+  E.select
+    [ A.value \_ value -> (fromOption value).key ]
+    [ Events.change \_ e -> pure \_ ->
+        toOption (unsafeCoerce e).target.value
+    ]
+    (options <#> \option ->
+      let { key, label } = fromOption option
+       in E.option [ A.value \_ _ -> key ] [] [ text \_ _ -> label ]
+    )
