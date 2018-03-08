@@ -16,6 +16,7 @@ module SDOM
 import Prelude
 
 import Control.Alternative (empty, (<|>))
+import Control.Lazy (class Lazy)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Ref (REF, modifyRef, modifyRef', newRef, readRef, writeRef)
 import Control.Monad.Rec.Class (Step(..), tailRecM)
@@ -111,6 +112,9 @@ instance strongSDOM :: Strong (SDOM channel context) where
     overEvents (map (map first)) <$> sd n context a (map (\{ old, new } -> { old: fst old, new: fst new }) e)
   second (SDOM sd) = SDOM \n context (Tuple _ b) e ->
     overEvents (map (map second)) <$> sd n context b (map (\{ old, new } -> { old: snd old, new: snd new }) e)
+
+instance lazySDOM :: Lazy (SDOM channel context i o) where
+  defer f = SDOM \n -> unSDOM (f unit) n
 
 overEvents
   :: forall a b r

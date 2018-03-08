@@ -56,6 +56,7 @@ forall channel context a b.
 Functor (SDOM channel context i)
 Profunctor (SDOM channel context)
 Strong (SDOM channel context)
+Lazy (SDOM channel context i o)
 ```
 
 #### `text`
