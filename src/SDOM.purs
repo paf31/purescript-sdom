@@ -1,5 +1,6 @@
 module SDOM
   ( SDOM
+  , mapContext
   , text
   , Attr
   , unsafeAttr
@@ -98,6 +99,14 @@ newtype SDOM channel context i o = SDOM
        { events :: Event (Either channel (i -> o))
        , unsubscribe :: Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) Unit
        })
+
+-- | Change the context type of a component.
+mapContext
+  :: forall channel context context' i o
+   . (context' -> context)
+  -> SDOM channel context i o
+  -> SDOM channel context' i o
+mapContext f (SDOM sd) = SDOM \n ctx -> sd n (f ctx)
 
 instance functorSDOM :: Functor (SDOM channel context i) where
   map f (SDOM sd) = SDOM \n context a e ->

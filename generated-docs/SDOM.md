@@ -59,6 +59,14 @@ Strong (SDOM channel context)
 Lazy (SDOM channel context i o)
 ```
 
+#### `mapContext`
+
+``` purescript
+mapContext :: forall channel context context' i o. (context' -> context) -> SDOM channel context i o -> SDOM channel context' i o
+```
+
+Change the context type of a component.
+
 #### `text`
 
 ``` purescript
