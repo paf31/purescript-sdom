@@ -2,6 +2,7 @@ module SDOM.Attributes
   ( for
   , id
   , name
+  , className
   , type_
   , value
   , checked
@@ -29,6 +30,9 @@ for = attr "for"
 
 id :: forall context model. (context -> model -> String) -> Attr context model
 id = attr "id"
+
+className :: forall context model. (context -> model -> String) -> Attr context model
+className = attr "class"
 
 name :: forall context model. (context -> model -> String) -> Attr context model
 name = attr "name"

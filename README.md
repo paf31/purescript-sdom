@@ -2,10 +2,13 @@
 
 An experiment in replacing the virtual DOM and avoiding diffing.
 
-- [Counter Example](examples/counter)
-- [Select Example](examples/select)
-- [Task List Example](examples/todo)
 - [Module Documentation](generated-docs/)
+- Examples
+  - [Counter](examples/counter)
+  - [Select](examples/select)
+  - [Task List](examples/todo)
+  - [Tree](examples/tree) (higher-order component)
+  - [Canvas](examples/canvas) (third-party component)
 
 ## Motivation
 
