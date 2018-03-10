@@ -7,6 +7,7 @@ An experiment in replacing the virtual DOM and avoiding diffing.
   - [Counter](examples/counter)
   - [Select](examples/select)
   - [Task List](examples/todo)
+  - [Async](examples/async)
   - [Tree](examples/tree) (higher-order component)
   - [Canvas](examples/canvas) (third-party component)
 
