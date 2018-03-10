@@ -55,6 +55,9 @@ counter =
       ]
     ]
 
+-- We must interpret the event channel (of type `Mode`) using the
+-- `interpretChannel` function. We can return an `Event`, which gives us the
+-- ability to deliver results asynchronously.
 counter_ :: forall channel context. SDOM channel context State State
 counter_ =
     interpretChannel interpreter counter
@@ -66,9 +69,6 @@ counter_ =
     fromMode Increasing = interval 100 $> \{ value } -> { mode: Increasing, value: value + 1 }
     fromMode Decreasing = interval 100 $> \{ value } -> { mode: Decreasing, value: value - 1 }
     fromMode Neither = pure \{ value } -> { mode: Neither, value }
-
-    overValue :: (Int -> Int) -> State -> State
-    overValue f o = o { value = f o.value }
 
 main :: Eff ( dom :: DOM
             , exception :: EXCEPTION
