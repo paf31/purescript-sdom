@@ -13,7 +13,7 @@ import DOM.Node.NonElementParentNode (getElementById)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (wrap)
 import FRP (FRP)
-import SDOM (SDOM, attach, text)
+import SDOM (SDOM, attach, text, text_)
 import SDOM.Components as Components
 import SDOM.Elements as E
 
@@ -47,9 +47,9 @@ select
    . SDOM channel context WidgetType WidgetType
 select =
   E.div_
-    [ E.h1_ [ text \_ _ -> "Select" ]
+    [ E.h1_ [ text_ "Select" ]
     , E.p_
-      [ text \_ _ -> "Choose a product: "
+      [ text_ "Choose a product: "
       , Components.select
           (\option -> { key: toString option, label: labelFor option })
           fromString

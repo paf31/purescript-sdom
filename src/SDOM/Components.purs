@@ -2,7 +2,7 @@ module SDOM.Components where
 
 import Prelude
 
-import SDOM (SDOM, text)
+import SDOM (SDOM, text_)
 import SDOM.Attributes as A
 import SDOM.Elements as E
 import SDOM.Events as Events
@@ -72,5 +72,5 @@ select fromOption toOption options =
     ]
     (options <#> \option ->
       let { key, label } = fromOption option
-       in E.option [ A.value \_ _ -> key ] [] [ text \_ _ -> label ]
+       in E.option [ A.value \_ _ -> key ] [] [ text_ label ]
     )

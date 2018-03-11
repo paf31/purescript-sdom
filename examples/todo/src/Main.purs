@@ -18,7 +18,7 @@ import Data.Newtype (wrap)
 import Data.Profunctor (dimap)
 import Data.Symbol (SProxy(..))
 import FRP (FRP)
-import SDOM (ArrayChannel(..), ArrayContext, SDOM, attach, array, text)
+import SDOM (ArrayChannel(..), ArrayContext, SDOM, attach, array, text, text_)
 import SDOM.Components (textbox, checkbox)
 import SDOM.Elements as E
 import SDOM.Events as Events
@@ -50,7 +50,7 @@ task = E.span_
   , E.button
       []
       [ Events.click \{ index } _ -> Left (Here (fromMaybe <*> deleteAt index)) ]
-      [ text \_ _ -> "✕" ]
+      [ text_ "✕" ]
   ]
 
 type TaskList =
@@ -62,11 +62,11 @@ taskList
    . SDOM channel context TaskList TaskList
 taskList = dimap _.tasks { tasks: _ } $
     E.div_
-      [ E.h1_ [ text \_ _ -> "Task List" ]
+      [ E.h1_ [ text_ "Task List" ]
       , E.button
           []
           [ Events.click \_ _ -> pure \xs -> xs <> [emptyTask] ]
-          [ text \_ _ -> "＋ New Task" ]
+          [ text_ "＋ New Task" ]
       , array "ol" (E.li_ [ task ])
       , E.p_ [ text \_ -> summaryLabel ]
       ]

@@ -16,7 +16,7 @@ import Data.Newtype (wrap)
 import FRP (FRP)
 import FRP.Event (Event)
 import FRP.Event.Time (interval)
-import SDOM (SDOM, attach, mapChannel, withAsync, text)
+import SDOM (SDOM, attach, mapChannel, withAsync, text, text_)
 import SDOM.Attributes as A
 import SDOM.Elements as E
 import SDOM.Events as Events
@@ -35,23 +35,23 @@ counter
    . SDOM Mode context State State
 counter =
   E.div_
-    [ E.h1_ [ text \_ _ -> "Async" ]
+    [ E.h1_ [ text_ "Async" ]
     , E.p_ [ text \_ { value } -> show value ]
     , E.p_
       [ E.button
           [ A.disabled \_ { mode } -> mode == Decreasing ]
           [ Events.click \_ _ -> Left Decreasing ]
-          [ text \_ _ -> "Decrement" ]
-      , text \_ _ -> " "
+          [ text_ "Decrement" ]
+      , text_ " "
       , E.button
           [ A.disabled \_ { mode } -> mode == Neither ]
           [ Events.click \_ _ -> Left Neither ]
-          [ text \_ _ -> "Stop" ]
-      , text \_ _ -> " "
+          [ text_ "Stop" ]
+      , text_ " "
       , E.button
         [ A.disabled \_ { mode } -> mode == Increasing ]
         [ Events.click \_ _ -> Left Increasing ]
-        [ text \_ _ -> "Increment" ]
+        [ text_ "Increment" ]
       ]
     ]
 

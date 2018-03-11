@@ -25,7 +25,7 @@ import FRP.Event (subscribe)
 import Global (readInt)
 import Graphics.Canvas (getContext2D, setCanvasHeight, setCanvasWidth)
 import Graphics.Drawing (Drawing, circle, fillColor, filled, rectangle, render)
-import SDOM (SDOM, attach, text, unsafeSDOM)
+import SDOM (SDOM, attach, text_, unsafeSDOM)
 import SDOM.Components (textbox)
 import SDOM.Elements as E
 import Unsafe.Coerce (unsafeCoerce)
@@ -56,9 +56,9 @@ app
    . SDOM channel context Int Int
 app =
   E.div_
-    [ E.h1_ [ text \_ _ -> "Canvas" ]
+    [ E.h1_ [ text_ "Canvas" ]
     , lmap renderCircle drawing
-    , E.p_ [ text \_ _ -> "Radius: "
+    , E.p_ [ text_ "Radius: "
            , dimap show (round <<< readInt 10) textbox
            ]
     ]

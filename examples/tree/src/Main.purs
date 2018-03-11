@@ -14,11 +14,11 @@ import DOM.Node.NonElementParentNode (getElementById)
 import Data.Bifunctor (lmap)
 import Data.Either (Either(..))
 import Data.Lens (lens')
-import Data.Maybe (Maybe(Nothing, Just))
+import Data.Maybe (Maybe(..))
 import Data.Newtype (wrap)
 import Data.Tuple (Tuple(..))
 import FRP (FRP)
-import SDOM (ArrayChannel(Parent), SDOM, array, attach, mapContext, interpretChannel, text)
+import SDOM (ArrayChannel(..), SDOM, array, attach, mapContext, interpretChannel, text, text_)
 import SDOM.Attributes as A
 import SDOM.Elements as E
 import SDOM.Events as Events
@@ -100,7 +100,7 @@ app
    . SDOM channel context (Tree Boolean) (Tree Boolean)
 app =
   E.div_
-    [ E.h1_ [ text \_ _ -> "Tree" ]
+    [ E.h1_ [ text_ "Tree" ]
     , E.div [ A.id \_ _ -> "tree" ] [] [ tree id node ]
     ]
 

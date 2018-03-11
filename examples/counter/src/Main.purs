@@ -10,10 +10,10 @@ import DOM.HTML (window)
 import DOM.HTML.Types (htmlDocumentToNonElementParentNode)
 import DOM.HTML.Window (document)
 import DOM.Node.NonElementParentNode (getElementById)
-import Data.Maybe (Maybe(Nothing, Just))
+import Data.Maybe (Maybe(..))
 import Data.Newtype (wrap)
 import FRP (FRP)
-import SDOM (SDOM, attach, text)
+import SDOM (SDOM, attach, text, text_)
 import SDOM.Elements as E
 import SDOM.Events as Events
 
@@ -22,7 +22,7 @@ counter
    . SDOM channel context Int Int
 counter =
   E.div_
-    [ E.h1_ [ text \_ _ -> "Counter" ]
+    [ E.h1_ [ text_ "Counter" ]
     , E.button
         []
         [ Events.click \_ _ -> pure \value -> value + 1 ]

@@ -83,6 +83,14 @@ forall channel context a r.
     a
 ```
 
+#### `text_`
+
+``` purescript
+text_ :: forall channel context i o. String -> SDOM channel context i o
+```
+
+Create a component which renders a (static) text node.
+
 #### `Attr`
 
 ``` purescript

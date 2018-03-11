@@ -1,6 +1,7 @@
 module SDOM
   ( SDOM
   , text
+  , text_
   , Attr
   , unsafeAttr
   , Handler
@@ -255,6 +256,14 @@ text f = SDOM \n context model e -> do
     when (oldValue /= newValue) $
       setTextContent newValue (textToNode tn)
   pure { unsubscribe, events: empty }
+
+-- | Create a component which renders a (static) text node.
+text_ :: forall channel context i o. String -> SDOM channel context i o
+text_ str = SDOM \n context model e -> do
+  doc <- window >>= document
+  tn <- createTextNode str (htmlDocumentToDocument doc)
+  _ <- appendChild (textToNode tn) n
+  pure { unsubscribe: pure unit, events: empty }
 
 -- | An attribute which can be associated with an `element`.
 -- |
