@@ -13,6 +13,7 @@ module SDOM
   , attach
   , unsafeSDOM
   , mapContext
+  , mapChannel
   , interpretChannel
   ) where
 
@@ -33,6 +34,7 @@ import DOM.Node.Document (createDocumentFragment, createElement, createTextNode)
 import DOM.Node.Node (appendChild, lastChild, removeChild, setTextContent)
 import DOM.Node.Types (Element, Node, documentFragmentToNode, elementToEventTarget, elementToNode, textToNode)
 import Data.Array (length, modifyAt, unsafeIndex, (!!), (..))
+import Data.Bifunctor (lmap)
 import Data.Either (Either(..), either)
 import Data.Filterable (filterMap, partitionMap)
 import Data.Foldable (for_, oneOfMap, sequence_, traverse_)
@@ -138,6 +140,7 @@ mapContext
   -> SDOM channel context' i o
 mapContext f (SDOM sd) = SDOM \n ctx -> sd n (f ctx)
 
+-- | Interpret the event channel of a component.
 interpretChannel
   :: forall channel channel' context i o
    . (Event channel -> Event (Either channel' (i -> o)))
@@ -148,6 +151,16 @@ interpretChannel f (SDOM sd) =
       overEvents f' <$> sd n context a e
   where
     f' = partitionMap id >>> \{ left, right } -> f left <|> Right <$> right
+
+-- | Change the event channel type of a component.
+mapChannel
+  :: forall channel channel' context i o
+   . (channel -> channel')
+  -> SDOM channel context i o
+  -> SDOM channel' context i o
+mapChannel f (SDOM sd) =
+  SDOM \n context a e ->
+    overEvents (map (lmap f)) <$> sd n context a e
 
 instance functorSDOM :: Functor (SDOM channel context i) where
   map f (SDOM sd) = SDOM \n context a e ->

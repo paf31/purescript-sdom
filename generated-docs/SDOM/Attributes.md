@@ -18,6 +18,12 @@ id :: forall context model. (context -> model -> String) -> Attr context model
 name :: forall context model. (context -> model -> String) -> Attr context model
 ```
 
+#### `className`
+
+``` purescript
+className :: forall context model. (context -> model -> String) -> Attr context model
+```
+
 #### `type_`
 
 ``` purescript
