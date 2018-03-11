@@ -350,4 +350,32 @@ interpretChannel :: forall channel channel' context i o. (Event channel -> Event
 
 Interpret the event channel of a component.
 
+#### `withAsync`
+
+``` purescript
+withAsync :: forall channel context i o. SDOM (Event (Either channel (i -> o))) context i o -> SDOM channel context i o
+```
+
+A convenience function which provides the ability to use `Event`s
+directly in a component's event channel.
+
+`Event`s will be disposed of when the component unmounts, or when a new
+event takes its place.
+
+For example, clicking this button starts a timer which raises a `Unit`
+event every second.
+
+```
+> :type text (const id)
+forall channel context a. SDOM channel context String a
+
+> import SDOM.Elements as E
+> import SDOM.Events as Events
+
+> handler _ _ = Left (interval 1000 $> Left unit)
+
+> :type withAsync (E.button [] [Events.click handler] [ text \_ _ -> "Start" ])
+forall channel context model. SDOM Unit channel context model
+```
+
 

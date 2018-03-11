@@ -14,9 +14,9 @@ import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Data.Newtype (wrap)
 import FRP (FRP)
-import FRP.Event (Event, keepLatest)
+import FRP.Event (Event)
 import FRP.Event.Time (interval)
-import SDOM (SDOM, attach, interpretChannel, text)
+import SDOM (SDOM, attach, mapChannel, withAsync, text)
 import SDOM.Attributes as A
 import SDOM.Elements as E
 import SDOM.Events as Events
@@ -56,19 +56,16 @@ counter =
     ]
 
 -- We must interpret the event channel (of type `Mode`) using the
--- `interpretChannel` function. We can return an `Event`, which gives us the
--- ability to deliver results asynchronously.
+-- `mapChannel` function. We can return an `Event`, which gives us the
+-- ability to deliver results asynchronously using `withAsync`.
 counter_ :: forall channel context. SDOM channel context State State
 counter_ =
-    interpretChannel interpreter counter
+    withAsync (mapChannel (map Right <<< interpreter) counter)
   where
-    interpreter :: Event Mode -> Event (Either channel (State -> State))
-    interpreter = keepLatest <<< map (map pure <<< fromMode)
-
-    fromMode :: Mode -> Event (State -> State)
-    fromMode Increasing = interval 100 $> \{ value } -> { mode: Increasing, value: value + 1 }
-    fromMode Decreasing = interval 100 $> \{ value } -> { mode: Decreasing, value: value - 1 }
-    fromMode Neither = pure \{ value } -> { mode: Neither, value }
+    interpreter :: Mode -> Event (State -> State)
+    interpreter Increasing = interval 100 $> \{ value } -> { mode: Increasing, value: value + 1 }
+    interpreter Decreasing = interval 100 $> \{ value } -> { mode: Decreasing, value: value - 1 }
+    interpreter Neither = pure \{ value } -> { mode: Neither, value }
 
 main :: Eff ( dom :: DOM
             , exception :: EXCEPTION
