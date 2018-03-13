@@ -55,3 +55,8 @@ In practice, this is not so much of a restriction, and the limited form of dynam
 is enough to emulate most common UI patterns. Indeed, working with the SDOM is quite
 reminiscent of template-based approaches to UI development, but keeping the "one
 way binding" approach which is commonly associated with the VDOM.
+
+### More
+For a more extensive motivation of the SDOM approach, an explanation of the 
+underlying approach and how it was developed, you may want to check out this 
+[blog post](http://blog.functorial.com/posts/2018-03-12-You-Might-Not-Need-The-Virtual-DOM.html).
