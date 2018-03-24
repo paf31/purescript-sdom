@@ -444,7 +444,7 @@ element el attrs handlers children = SDOM \n context model updates -> do
              , unsubscribe :: Eff (frp :: FRP, dom :: DOM | eff) Unit
              }
       setHandler (Handler h) = h context e
-  unsubcribers <- traverse setAttr attrs
+  unsubscribers <- traverse setAttr attrs
   evts <- traverse setHandler handlers
   childrenEvts <- traverse (\child -> unSDOM child (elementToNode e) context model updates) children
   pure
@@ -452,7 +452,7 @@ element el attrs handlers children = SDOM \n context model updates -> do
         oneOfMap _.events evts
         <|> oneOfMap _.events childrenEvts
     , unsubscribe:
-        sequence_ unsubcribers
+        sequence_ unsubscribers
           *> traverse_ _.unsubscribe evts
           *> traverse_ _.unsubscribe childrenEvts
     }
