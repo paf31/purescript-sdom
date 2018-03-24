@@ -15,7 +15,8 @@
     "purescript-dom": "^4.13.2",
     "purescript-behaviors": "^6.3.0",
     "purescript-profunctor": "^3.2.0",
-    "purescript-refs": "^3.0.0"
+    "purescript-refs": "^3.0.0",
+    "purescript-incremental": "git://github.com/paf31/purescript-incremental.git#^0.2.1"
   },
   "devDependencies": {
     "purescript-psci-support": "^3.0.0"

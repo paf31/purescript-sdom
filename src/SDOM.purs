@@ -24,8 +24,11 @@ import Prelude
 import Control.Alternative (empty, (<|>))
 import Control.Lazy (class Lazy)
 import Control.Monad.Eff (Eff)
+import Control.Monad.Eff.Console (logShow)
 import Control.Monad.Eff.Ref (REF, modifyRef, modifyRef', newRef, readRef, writeRef)
 import Control.Monad.Rec.Class (Step(..), tailRecM)
+import Control.MonadZero (guard)
+import Control.Plus (empty)
 import DOM (DOM)
 import DOM.Event.Event as Event
 import DOM.Event.EventTarget (addEventListener, eventListener, removeEventListener)
@@ -33,23 +36,28 @@ import DOM.HTML (window)
 import DOM.HTML.Types (htmlDocumentToDocument)
 import DOM.HTML.Window (document)
 import DOM.Node.Document (createDocumentFragment, createElement, createTextNode)
-import DOM.Node.Node (appendChild, lastChild, removeChild, setTextContent)
-import DOM.Node.Types (Element, Node, documentFragmentToNode, elementToEventTarget, elementToNode, textToNode)
-import Data.Array (length, modifyAt, unsafeIndex, (!!), (..))
+import DOM.Node.HTMLCollection (item)
+import DOM.Node.Node (appendChild, insertBefore, lastChild, removeChild, setTextContent)
+import DOM.Node.ParentNode (children)
+import DOM.Node.Types (Element, Node, documentFragmentToNode, elementToEventTarget, elementToNode, elementToParentNode, textToNode)
+import Data.Array ((!!), length, mapMaybe, mapWithIndex, null)
 import Data.Bifunctor (lmap)
 import Data.Either (Either(..), either)
 import Data.Filterable (filterMap, partitionMap)
-import Data.Foldable (for_, oneOfMap, sequence_, traverse_)
-import Data.List (List(..), drop, take, (:))
-import Data.Maybe (Maybe(..), fromMaybe)
-import Data.Newtype (wrap)
-import Data.Profunctor (class Profunctor, dimap)
-import Data.Profunctor.Strong (class Strong, first, second)
+import Data.Foldable (fold, foldMap, oneOfMap, sequence_, traverse_)
+import Data.FoldableWithIndex (foldMapWithIndex)
+import Data.Incremental (class Patch, Change, Jet, constant, fromChange, patch, toChange)
+import Data.Incremental.Eq (WrappedEq)
+import Data.Incremental.Map (MapChange(..))
+import Data.List (List(..), uncons, (:))
+import Data.Maybe (Maybe(Just, Nothing))
+import Data.Maybe.Last (Last(..))
+import Data.Newtype (unwrap, wrap)
 import Data.Traversable (traverse)
-import Data.Tuple (Tuple(..), fst, snd)
 import FRP (FRP)
 import FRP.Event (Event, create, keepLatest, subscribe)
-import Partial.Unsafe (unsafePartial)
+import Partial.Unsafe (unsafeCrashWith)
+import SDOM.SnocArray (SnocArray(..), SnocArrayChange(..), modifyAt, snoc)
 
 -- | A value of type `SDOM channel context i o` represents a component in the
 -- | "static DOM".
@@ -95,14 +103,14 @@ import Partial.Unsafe (unsafePartial)
 -- |     (Tuple String b)
 -- |     (Tuple a b)
 -- | ```
-newtype SDOM channel context i o = SDOM
+newtype SDOM channel context model = SDOM
   (forall eff
    . Node
   -> context
-  -> i
-  -> Event { old :: i, new :: i }
+  -> model
+  -> Event (Jet model)
   -> Eff (dom :: DOM, frp :: FRP, ref :: REF | eff)
-       { events :: Event (Either channel (i -> o))
+       { events :: Event (Either channel (Change model))
        , unsubscribe :: Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) Unit
        })
 
@@ -120,34 +128,34 @@ newtype SDOM channel context i o = SDOM
 -- | - Return an `unsubscribe` function to clean up any event handlers when the
 -- |   component is removed.
 unsafeSDOM
-  :: forall channel context i o
+  :: forall channel context model
    . (  forall eff
       . Node
      -> context
-     -> i
-     -> Event { old :: i, new :: i }
+     -> model
+     -> Event (Jet model)
      -> Eff (dom :: DOM, frp :: FRP, ref :: REF | eff)
-          { events :: Event (Either channel (i -> o))
+          { events :: Event (Either channel (Change model))
           , unsubscribe :: Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) Unit
           }
      )
-  -> SDOM channel context i o
+  -> SDOM channel context model
 unsafeSDOM = SDOM
 
 -- | Change the context type of a component.
 mapContext
-  :: forall channel context context' i o
+  :: forall channel context context' model
    . (context' -> context)
-  -> SDOM channel context i o
-  -> SDOM channel context' i o
+  -> SDOM channel context model
+  -> SDOM channel context' model
 mapContext f (SDOM sd) = SDOM \n ctx -> sd n (f ctx)
 
 -- | Interpret the event channel of a component.
 interpretChannel
-  :: forall channel channel' context i o
-   . (Event channel -> Event (Either channel' (i -> o)))
-  -> SDOM channel context i o
-  -> SDOM channel' context i o
+  :: forall channel channel' context model
+   . (Event channel -> Event (Either channel' (Change model)))
+  -> SDOM channel context model
+  -> SDOM channel' context model
 interpretChannel f (SDOM sd) =
     SDOM \n context a e ->
       overEvents f' <$> sd n context a e
@@ -156,10 +164,10 @@ interpretChannel f (SDOM sd) =
 
 -- | Change the event channel type of a component.
 mapChannel
-  :: forall channel channel' context i o
+  :: forall channel channel' context model
    . (channel -> channel')
-  -> SDOM channel context i o
-  -> SDOM channel' context i o
+  -> SDOM channel context model
+  -> SDOM channel' context model
 mapChannel f (SDOM sd) =
   SDOM \n context a e ->
     overEvents (map (lmap f)) <$> sd n context a e
@@ -186,26 +194,26 @@ mapChannel f (SDOM sd) =
 -- | forall channel context model. SDOM Unit channel context model
 -- | ```
 withAsync
-  :: forall channel context i o
-   . SDOM (Event (Either channel (i -> o))) context i o
-  -> SDOM channel context i o
+  :: forall channel context model
+   . SDOM (Event (Either channel (Change model))) context model
+  -> SDOM channel context model
 withAsync = interpretChannel keepLatest
+--
+-- instance functorSDOM :: Functor (SDOM channel context i) where
+--   map f (SDOM sd) = SDOM \n context a e ->
+--     overEvents (map (map (map f))) <$> sd n context a e
+--
+-- instance profunctorSDOM :: Profunctor (SDOM channel context) where
+--   dimap f g (SDOM sd) = SDOM \n context a e ->
+--     overEvents (map (map (dimap f g))) <$> sd n context (f a) (map (\{ old, new } -> { old: f old, new: f new }) e)
+--
+-- instance strongSDOM :: Strong (SDOM channel context) where
+--   first (SDOM sd) = SDOM \n context (Tuple a _) e ->
+--     overEvents (map (map first)) <$> sd n context a (map (\{ old, new } -> { old: fst old, new: fst new }) e)
+--   second (SDOM sd) = SDOM \n context (Tuple _ b) e ->
+--     overEvents (map (map second)) <$> sd n context b (map (\{ old, new } -> { old: snd old, new: snd new }) e)
 
-instance functorSDOM :: Functor (SDOM channel context i) where
-  map f (SDOM sd) = SDOM \n context a e ->
-    overEvents (map (map (map f))) <$> sd n context a e
-
-instance profunctorSDOM :: Profunctor (SDOM channel context) where
-  dimap f g (SDOM sd) = SDOM \n context a e ->
-    overEvents (map (map (dimap f g))) <$> sd n context (f a) (map (\{ old, new } -> { old: f old, new: f new }) e)
-
-instance strongSDOM :: Strong (SDOM channel context) where
-  first (SDOM sd) = SDOM \n context (Tuple a _) e ->
-    overEvents (map (map first)) <$> sd n context a (map (\{ old, new } -> { old: fst old, new: fst new }) e)
-  second (SDOM sd) = SDOM \n context (Tuple _ b) e ->
-    overEvents (map (map second)) <$> sd n context b (map (\{ old, new } -> { old: snd old, new: snd new }) e)
-
-instance lazySDOM :: Lazy (SDOM channel context i o) where
+instance lazySDOM :: Lazy (SDOM channel context model) where
   defer f = SDOM \n -> unSDOM (f unit) n
 
 overEvents
@@ -216,14 +224,14 @@ overEvents
 overEvents f o = o { events = f o.events }
 
 unSDOM
-  :: forall eff channel context i o
-   . SDOM channel context i o
+  :: forall eff channel context model
+   . SDOM channel context model
   -> Node
   -> context
-  -> i
-  -> Event { old :: i, new :: i }
+  -> model
+  -> Event (Jet model)
   -> Eff (dom :: DOM, frp :: FRP, ref :: REF | eff)
-       { events :: Event (Either channel (i -> o))
+       { events :: Event (Either channel (Change model))
        , unsubscribe :: Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) Unit
        }
 unSDOM (SDOM f) = f
@@ -245,20 +253,23 @@ unSDOM (SDOM f) = f
 -- |     }
 -- |     a
 -- | ```
-text :: forall channel context i o. (context -> i -> String) -> SDOM channel context i o
+text
+  :: forall channel context change model
+   . Patch model change
+  => (context -> Jet model -> Jet (WrappedEq String))
+  -> SDOM channel context model
 text f = SDOM \n context model e -> do
   doc <- window >>= document
-  tn <- createTextNode (f context model) (htmlDocumentToDocument doc)
+  tn <- createTextNode (unwrap (f context (constant model)).position) (htmlDocumentToDocument doc)
   _ <- appendChild (textToNode tn) n
-  unsubscribe <- e `subscribe` \{ old, new } -> do
-    let oldValue = f context old
-        newValue = f context new
-    when (oldValue /= newValue) $
-      setTextContent newValue (textToNode tn)
+  unsubscribe <- e `subscribe` \j -> do
+    case fromChange (f context j).velocity of
+      Last (Just newValue) -> setTextContent newValue (textToNode tn)
+      _ -> pure unit
   pure { unsubscribe, events: empty }
 
 -- | Create a component which renders a (static) text node.
-text_ :: forall channel context i o. String -> SDOM channel context i o
+text_ :: forall channel context model. String -> SDOM channel context model
 text_ str = SDOM \n context model e -> do
   doc <- window >>= document
   tn <- createTextNode str (htmlDocumentToDocument doc)
@@ -289,7 +300,7 @@ newtype Attr context model = Attr
    . context
   -> Element
   -> { init :: model -> Eff (dom :: DOM | eff) Unit
-     , update :: { old :: model, new :: model } -> Eff (dom :: DOM | eff) Unit
+     , update :: Jet model -> Eff (dom :: DOM | eff) Unit
      }
    )
 
@@ -304,10 +315,7 @@ unsafeAttr
      . context
     -> Element
     -> { init :: model -> Eff (dom :: DOM | eff) Unit
-       , update :: { old :: model
-                   , new :: model
-                   }
-                -> Eff (dom :: DOM | eff) Unit
+       , update :: Jet model -> Eff (dom :: DOM | eff) Unit
        }
      )
   -> Attr context model
@@ -416,19 +424,19 @@ handler evtName f = Handler \context e -> do
 -- |     }
 -- | ```
 element
-  :: forall channel context i o
+  :: forall channel context model
    . String
-  -> Array (Attr context i)
-  -> Array (Handler context (Either channel (i -> o)))
-  -> Array (SDOM channel context i o)
-  -> SDOM channel context i o
+  -> Array (Attr context model)
+  -> Array (Handler context (Either channel (Change model)))
+  -> Array (SDOM channel context model)
+  -> SDOM channel context model
 element el attrs handlers children = SDOM \n context model updates -> do
   doc <- window >>= document
   e <- createElement el (htmlDocumentToDocument doc)
   _ <- appendChild (elementToNode e) n
   let setAttr
         :: forall eff
-         . Attr context i
+         . Attr context model
         -> Eff (frp :: FRP, dom :: DOM, ref :: REF | eff)
              (Eff (frp :: FRP, dom :: DOM, ref :: REF | eff) Unit)
       setAttr (Attr attr) = do
@@ -438,9 +446,9 @@ element el attrs handlers children = SDOM \n context model updates -> do
 
       setHandler
         :: forall eff
-         . Handler context (Either channel (i -> o))
+         . Handler context (Either channel (Change model))
         -> Eff (frp :: FRP, dom :: DOM | eff)
-             { events :: Event (Either channel (i -> o))
+             { events :: Event (Either channel (Change model))
              , unsubscribe :: Eff (frp :: FRP, dom :: DOM | eff) Unit
              }
       setHandler (Handler h) = h context e
@@ -472,22 +480,11 @@ element el attrs handlers children = SDOM \n context model updates -> do
 -- |   SDOM context channel i o
 -- | ```
 element_
-  :: forall channel context i o
+  :: forall channel context model
    . String
-  -> Array (SDOM channel context i o)
-  -> SDOM channel context i o
+  -> Array (SDOM channel context model)
+  -> SDOM channel context model
 element_ el = element el [] []
-
-removeLastNChildren :: forall eff. Int -> Node -> Eff (dom :: DOM | eff) Unit
-removeLastNChildren m n = tailRecM loop m where
-  loop toRemove
-    | toRemove <= 0 = pure (Done unit)
-    | otherwise = do
-    child <- lastChild n
-    case child of
-      Nothing -> pure (Done unit)
-      Just child_ -> do _ <- removeChild child_ n
-                        pure (Loop (toRemove - 1))
 
 -- | The event channel for an `array` component.
 -- |
@@ -495,7 +492,7 @@ removeLastNChildren m n = tailRecM loop m where
 -- | `Here`, by acting on the array itself.
 data ArrayChannel i channel
   = Parent channel
-  | Here (Array i -> Array i)
+  | Here (Change (SnocArray i))
 
 -- | The context of subcomponent in an `array` component includes the current
 -- | context inherited from the parent, as well as the index of the current
@@ -521,19 +518,20 @@ type ArrayContext context =
 -- |   arrays should not present any issues, but large arrays might if edits
 -- |   typically take place away from the end of the array.
 array
-  :: forall channel context i
-   . String
-  -> SDOM (ArrayChannel i channel) (ArrayContext context) i i
-  -> SDOM channel context (Array i) (Array i)
+  :: forall channel context change model
+   . Patch model change
+  => String
+  -> SDOM (ArrayChannel model channel) (ArrayContext context) model
+  -> SDOM channel context (SnocArray model)
 array el sd = SDOM arrayImpl where
   arrayImpl
     :: forall eff
      . Node
     -> context
-    -> Array i
-    -> Event { old :: Array i, new :: Array i }
+    -> SnocArray model
+    -> Event (Jet (SnocArray model))
     -> Eff (dom :: DOM, frp :: FRP, ref :: REF | eff)
-         { events :: Event (Either channel (Array i -> Array i))
+         { events :: Event (Either channel (Change (SnocArray model)))
          , unsubscribe :: Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) Unit
          }
   arrayImpl n context models updates = do
@@ -543,31 +541,47 @@ array el sd = SDOM arrayImpl where
     unsubscribers <- newRef Nil
     let runUnsubscribers = readRef unsubscribers >>= sequence_
     { event, push } <- create
-    let setup :: Array i -> Array i -> Eff (frp :: FRP, dom :: DOM, ref :: REF | eff) Unit
-        setup old_ new_
-          | length new_ > length old_ = do
-            for_ (length old_ .. (length new_ - 1)) \idx -> do
-              fragment <- createDocumentFragment (htmlDocumentToDocument doc)
-              let frag = documentFragmentToNode fragment
-                  here xs = unsafePartial (xs `unsafeIndex` idx)
-                  childCtx = { index: idx, parent: context }
-              { events, unsubscribe } <- unSDOM sd frag childCtx (here new_) (filterMap (\{ old, new } -> { old: _, new: _ } <$> (old !! idx) <*> (new !! idx)) updates)
-              unsubscribe1 <- events `subscribe` \ev ->
-                case ev of
-                  Left (Parent other) -> push (Left other)
-                  Left (Here fi) -> push (Right fi)
-                  Right f -> push (Right (\xs -> fromMaybe xs (modifyAt idx f xs)))
-              _ <- appendChild frag (elementToNode e)
-              modifyRef unsubscribers ((unsubscribe *> unsubscribe1) : _)
-              pure unit
-          | length new_ < length old_ = do
-            let d = length old_ - length new_
-            dropped <- modifyRef' unsubscribers \xs -> { state: drop d xs, value: take d xs }
-            sequence_ dropped
-            removeLastNChildren d (elementToNode e)
-          | otherwise = pure unit
-    setup [] models
-    unsubscribe <- updates `subscribe` \{ old, new } -> setup old new
+    let setup :: Jet (SnocArray model) -> Eff (frp :: FRP, dom :: DOM, ref :: REF | eff) Unit
+        setup { position, velocity } = traverse_ go (fromChange velocity) where
+          go (Snoc newModel) = void do
+            fragment <- documentFragmentToNode <$> createDocumentFragment (htmlDocumentToDocument doc)
+            let idx = length (unwrap position)
+                childCtx = { index: idx, parent: context }
+            { events, unsubscribe } <- unSDOM sd fragment childCtx newModel (filterMap (filterEvents idx) updates)
+            unsubscribe1 <- events `subscribe` \ev ->
+              case ev of
+                Left (Parent other) -> push (Left other)
+                Left (Here fi) -> push (Right fi)
+                Right f -> push (Right (modifyAt idx f))
+            _ <- appendChild fragment (elementToNode e)
+            modifyRef unsubscribers ((unsubscribe *> unsubscribe1) : _)
+            pure unit
+          go Unsnoc = do
+            unsubscriber <- modifyRef' unsubscribers \xs ->
+              case uncons xs of
+                Just { head, tail } -> { state: tail, value: Just head }
+                _ -> unsafeCrashWith "array: empty unsubscribers in Unsnoc"
+            sequence_ unsubscriber
+            child <- lastChild (elementToNode e)
+            traverse_ (\c -> removeChild c (elementToNode e)) child
+          go _ = pure unit
+
+        filterEvents :: Int -> Jet (SnocArray model) -> Maybe (Jet model)
+        filterEvents idx { position, velocity } =
+          do
+            let relevant = mapMaybe filterEvent (fromChange velocity)
+            guard (not (null relevant))
+            x <- unwrap position !! idx
+            pure { position: x, velocity: toChange (fold relevant) }
+          where
+            filterEvent :: SnocArrayChange model change -> Maybe change
+            filterEvent (ModifyAt i dv) | i == idx = Just dv
+            filterEvent _ = Nothing
+    setup
+      { position: wrap []
+      , velocity: foldMap snoc (unwrap models)
+      }
+    unsubscribe <- updates `subscribe` setup
     pure
       { events: event
       , unsubscribe: unsubscribe *> runUnsubscribers
@@ -589,13 +603,15 @@ array el sd = SDOM arrayImpl where
 -- | - `The `detach` function detaches the component from the DOM and unregisters
 -- |   any event handlers.
 attach
-  :: forall eff model
-   . Element
+  :: forall eff model change
+   . Patch model change
+  => Show change
+  => Element
   -> model
-  -> SDOM Void Unit model model
-  -> Eff (dom :: DOM, frp :: FRP, ref :: REF | eff)
-       { push :: (model -> model) -> Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) Unit
-       , detach :: Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) Unit
+  -> SDOM Void Unit model
+  -> Eff (dom :: DOM, frp :: FRP, ref :: REF | _)
+       { push :: Change model -> Eff (dom :: DOM, frp :: FRP, ref :: REF | _) Unit
+       , detach :: Eff (dom :: DOM, frp :: FRP, ref :: REF | _) Unit
        }
 attach root model v = do
   modelRef <- newRef model
@@ -606,10 +622,11 @@ attach root model v = do
   { events, unsubscribe } <- unSDOM v n unit model event
   let pushNewModel e = do
         oldModel <- readRef modelRef
-        let f = either absurd id e
-            newModel = f oldModel
+        let change = either absurd id e
+            newModel = patch oldModel (fromChange change)
+        logShow (fromChange change)
         _ <- writeRef modelRef newModel
-        push { old: oldModel, new: newModel }
+        push { position: oldModel, velocity: change }
   unsubscribe1 <- events `subscribe` pushNewModel
   _ <- appendChild n (elementToNode root)
   pure
