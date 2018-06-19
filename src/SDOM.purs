@@ -23,18 +23,7 @@ import Prelude
 
 import Control.Alternative (empty, (<|>))
 import Control.Lazy (class Lazy)
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Ref (REF, modifyRef, modifyRef', newRef, readRef, writeRef)
 import Control.Monad.Rec.Class (Step(..), tailRecM)
-import DOM (DOM)
-import DOM.Event.Event as Event
-import DOM.Event.EventTarget (addEventListener, eventListener, removeEventListener)
-import DOM.HTML (window)
-import DOM.HTML.Types (htmlDocumentToDocument)
-import DOM.HTML.Window (document)
-import DOM.Node.Document (createDocumentFragment, createElement, createTextNode)
-import DOM.Node.Node (appendChild, lastChild, removeChild, setTextContent)
-import DOM.Node.Types (Element, Node, documentFragmentToNode, elementToEventTarget, elementToNode, textToNode)
 import Data.Array (length, modifyAt, unsafeIndex, (!!), (..))
 import Data.Bifunctor (lmap)
 import Data.Either (Either(..), either)
@@ -47,9 +36,21 @@ import Data.Profunctor (class Profunctor, dimap)
 import Data.Profunctor.Strong (class Strong, first, second)
 import Data.Traversable (traverse)
 import Data.Tuple (Tuple(..), fst, snd)
-import FRP (FRP)
+import Effect (Effect)
+import Effect.Ref as Ref
 import FRP.Event (Event, create, keepLatest, subscribe)
 import Partial.Unsafe (unsafePartial)
+import Web.DOM (Node, Element)
+import Web.DOM.Document (createDocumentFragment, createElement, createTextNode)
+import Web.DOM.Node (appendChild, lastChild, removeChild, setTextContent)
+import Web.DOM.Element as Element
+import Web.DOM.DocumentFragment as DocumentFragment
+import Web.DOM.Text as Text
+import Web.Event.Event as Event
+import Web.Event.EventTarget (addEventListener, eventListener, removeEventListener)
+import Web.HTML (window)
+import Web.HTML.HTMLDocument as HTMLDocument
+import Web.HTML.Window (document)
 
 -- | A value of type `SDOM channel context i o` represents a component in the
 -- | "static DOM".
@@ -85,25 +86,24 @@ import Partial.Unsafe (unsafePartial)
 -- | particular piece of the model:
 -- |
 -- | ```
--- | > :type text (const id)
+-- | > :type text (const identity)
 -- | forall channel context a. SDOM channel context String a
 -- |
 -- | > import Data.Lens
--- | > :type _1 (text (const id))
+-- | > :type _1 (text (const identity))
 -- | forall channel context a b.
 -- |   SDOM channel context
 -- |     (Tuple String b)
 -- |     (Tuple a b)
 -- | ```
 newtype SDOM channel context i o = SDOM
-  (forall eff
-   . Node
+  (Node
   -> context
   -> i
   -> Event { old :: i, new :: i }
-  -> Eff (dom :: DOM, frp :: FRP, ref :: REF | eff)
+  -> Effect
        { events :: Event (Either channel (i -> o))
-       , unsubscribe :: Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) Unit
+       , unsubscribe :: Effect Unit
        })
 
 -- | This function is provided in order to wrap existing Javascript components.
@@ -121,14 +121,13 @@ newtype SDOM channel context i o = SDOM
 -- |   component is removed.
 unsafeSDOM
   :: forall channel context i o
-   . (  forall eff
-      . Node
+   . (Node
      -> context
      -> i
      -> Event { old :: i, new :: i }
-     -> Eff (dom :: DOM, frp :: FRP, ref :: REF | eff)
+     -> Effect
           { events :: Event (Either channel (i -> o))
-          , unsubscribe :: Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) Unit
+          , unsubscribe :: Effect Unit
           }
      )
   -> SDOM channel context i o
@@ -152,7 +151,7 @@ interpretChannel f (SDOM sd) =
     SDOM \n context a e ->
       overEvents f' <$> sd n context a e
   where
-    f' = partitionMap id >>> \{ left, right } -> f left <|> Right <$> right
+    f' = partitionMap identity >>> \{ left, right } -> f left <|> Right <$> right
 
 -- | Change the event channel type of a component.
 mapChannel
@@ -174,7 +173,7 @@ mapChannel f (SDOM sd) =
 -- | event every second.
 -- |
 -- | ```
--- | > :type text (const id)
+-- | > :type text (const identity)
 -- | forall channel context a. SDOM channel context String a
 -- |
 -- | > import SDOM.Elements as E
@@ -216,15 +215,15 @@ overEvents
 overEvents f o = o { events = f o.events }
 
 unSDOM
-  :: forall eff channel context i o
+  :: forall channel context i o
    . SDOM channel context i o
   -> Node
   -> context
   -> i
   -> Event { old :: i, new :: i }
-  -> Eff (dom :: DOM, frp :: FRP, ref :: REF | eff)
+  -> Effect
        { events :: Event (Either channel (i -> o))
-       , unsubscribe :: Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) Unit
+       , unsubscribe :: Effect Unit
        }
 unSDOM (SDOM f) = f
 
@@ -248,21 +247,21 @@ unSDOM (SDOM f) = f
 text :: forall channel context i o. (context -> i -> String) -> SDOM channel context i o
 text f = SDOM \n context model e -> do
   doc <- window >>= document
-  tn <- createTextNode (f context model) (htmlDocumentToDocument doc)
-  _ <- appendChild (textToNode tn) n
+  tn <- createTextNode (f context model) (HTMLDocument.toDocument doc)
+  _ <- appendChild (Text.toNode tn) n
   unsubscribe <- e `subscribe` \{ old, new } -> do
     let oldValue = f context old
         newValue = f context new
     when (oldValue /= newValue) $
-      setTextContent newValue (textToNode tn)
+      setTextContent newValue (Text.toNode tn)
   pure { unsubscribe, events: empty }
 
 -- | Create a component which renders a (static) text node.
 text_ :: forall channel context i o. String -> SDOM channel context i o
 text_ str = SDOM \n context model e -> do
   doc <- window >>= document
-  tn <- createTextNode str (htmlDocumentToDocument doc)
-  _ <- appendChild (textToNode tn) n
+  tn <- createTextNode str (HTMLDocument.toDocument doc)
+  _ <- appendChild (Text.toNode tn) n
   pure { unsubscribe: pure unit, events: empty }
 
 -- | An attribute which can be associated with an `element`.
@@ -285,11 +284,10 @@ text_ str = SDOM \n context model e -> do
 -- |     }
 -- | ```
 newtype Attr context model = Attr
-   ( forall eff
-   . context
+   ( context
   -> Element
-  -> { init :: model -> Eff (dom :: DOM | eff) Unit
-     , update :: { old :: model, new :: model } -> Eff (dom :: DOM | eff) Unit
+  -> { init :: model -> Effect Unit
+     , update :: { old :: model, new :: model } -> Effect Unit
      }
    )
 
@@ -300,14 +298,13 @@ newtype Attr context model = Attr
 -- | the functions in the `SDOM.Attributes` module instead.
 unsafeAttr
   :: forall context model
-   . ( forall eff
-     . context
+   . ( context
     -> Element
-    -> { init :: model -> Eff (dom :: DOM | eff) Unit
+    -> { init :: model -> Effect Unit
        , update :: { old :: model
                    , new :: model
                    }
-                -> Eff (dom :: DOM | eff) Unit
+                -> Effect Unit
        }
      )
   -> Attr context model
@@ -330,12 +327,11 @@ unsafeAttr = Attr
 -- | forall context. Handler context Unit
 -- | ```
 newtype Handler context e = Handler
-  (forall eff
-   . context
+  (context
   -> Element
-  -> Eff (frp :: FRP, dom :: DOM | eff)
+  -> Effect
        { events :: Event e
-       , unsubscribe :: Eff (frp :: FRP, dom :: DOM | eff) Unit
+       , unsubscribe :: Effect Unit
        }
   )
 
@@ -352,8 +348,8 @@ handler
   -> Handler context e
 handler evtName f = Handler \context e -> do
   { event, push } <- create
-  let listener = eventListener (push <<< f context)
-      target = elementToEventTarget e
+  listener <- eventListener (push <<< f context)
+  let target = Element.toEventTarget e
       unsubscribe = removeEventListener (wrap evtName) listener false target
   addEventListener (wrap evtName) listener false target
   pure
@@ -424,29 +420,24 @@ element
   -> SDOM channel context i o
 element el attrs handlers children = SDOM \n context model updates -> do
   doc <- window >>= document
-  e <- createElement el (htmlDocumentToDocument doc)
-  _ <- appendChild (elementToNode e) n
-  let setAttr
-        :: forall eff
-         . Attr context i
-        -> Eff (frp :: FRP, dom :: DOM, ref :: REF | eff)
-             (Eff (frp :: FRP, dom :: DOM, ref :: REF | eff) Unit)
+  e <- createElement el (HTMLDocument.toDocument doc)
+  _ <- appendChild (Element.toNode e) n
+  let setAttr :: Attr context i -> Effect (Effect Unit)
       setAttr (Attr attr) = do
         let { init, update } = attr context e
         init model
         updates `subscribe` update
 
       setHandler
-        :: forall eff
-         . Handler context (Either channel (i -> o))
-        -> Eff (frp :: FRP, dom :: DOM | eff)
+        :: Handler context (Either channel (i -> o))
+        -> Effect
              { events :: Event (Either channel (i -> o))
-             , unsubscribe :: Eff (frp :: FRP, dom :: DOM | eff) Unit
+             , unsubscribe :: Effect Unit
              }
       setHandler (Handler h) = h context e
   unsubscribers <- traverse setAttr attrs
   evts <- traverse setHandler handlers
-  childrenEvts <- traverse (\child -> unSDOM child (elementToNode e) context model updates) children
+  childrenEvts <- traverse (\child -> unSDOM child (Element.toNode e) context model updates) children
   pure
     { events:
         oneOfMap _.events evts
@@ -478,7 +469,7 @@ element_
   -> SDOM channel context i o
 element_ el = element el [] []
 
-removeLastNChildren :: forall eff. Int -> Node -> Eff (dom :: DOM | eff) Unit
+removeLastNChildren :: Int -> Node -> Effect Unit
 removeLastNChildren m n = tailRecM loop m where
   loop toRemove
     | toRemove <= 0 = pure (Done unit)
@@ -527,28 +518,27 @@ array
   -> SDOM channel context (Array i) (Array i)
 array el sd = SDOM arrayImpl where
   arrayImpl
-    :: forall eff
-     . Node
+    :: Node
     -> context
     -> Array i
     -> Event { old :: Array i, new :: Array i }
-    -> Eff (dom :: DOM, frp :: FRP, ref :: REF | eff)
+    -> Effect
          { events :: Event (Either channel (Array i -> Array i))
-         , unsubscribe :: Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) Unit
+         , unsubscribe :: Effect Unit
          }
   arrayImpl n context models updates = do
     doc <- window >>= document
-    e <- createElement el (htmlDocumentToDocument doc)
-    _ <- appendChild (elementToNode e) n
-    unsubscribers <- newRef Nil
-    let runUnsubscribers = readRef unsubscribers >>= sequence_
+    e <- createElement el (HTMLDocument.toDocument doc)
+    _ <- appendChild (Element.toNode e) n
+    unsubscribers <- Ref.new Nil
+    let runUnsubscribers = Ref.read unsubscribers >>= sequence_
     { event, push } <- create
-    let setup :: Array i -> Array i -> Eff (frp :: FRP, dom :: DOM, ref :: REF | eff) Unit
+    let setup :: Array i -> Array i -> Effect Unit
         setup old_ new_
           | length new_ > length old_ = do
             for_ (length old_ .. (length new_ - 1)) \idx -> do
-              fragment <- createDocumentFragment (htmlDocumentToDocument doc)
-              let frag = documentFragmentToNode fragment
+              fragment <- createDocumentFragment (HTMLDocument.toDocument doc)
+              let frag = DocumentFragment.toNode fragment
                   here xs = unsafePartial (xs `unsafeIndex` idx)
                   childCtx = { index: idx, parent: context }
               { events, unsubscribe } <- unSDOM sd frag childCtx (here new_) (filterMap (\{ old, new } -> { old: _, new: _ } <$> (old !! idx) <*> (new !! idx)) updates)
@@ -557,14 +547,14 @@ array el sd = SDOM arrayImpl where
                   Left (Parent other) -> push (Left other)
                   Left (Here fi) -> push (Right fi)
                   Right f -> push (Right (\xs -> fromMaybe xs (modifyAt idx f xs)))
-              _ <- appendChild frag (elementToNode e)
-              modifyRef unsubscribers ((unsubscribe *> unsubscribe1) : _)
+              _ <- appendChild frag (Element.toNode e)
+              _ <- Ref.modify ((unsubscribe *> unsubscribe1) : _) unsubscribers
               pure unit
           | length new_ < length old_ = do
             let d = length old_ - length new_
-            dropped <- modifyRef' unsubscribers \xs -> { state: drop d xs, value: take d xs }
+            dropped <- Ref.modify' (\xs -> { state: drop d xs, value: take d xs }) unsubscribers
             sequence_ dropped
-            removeLastNChildren d (elementToNode e)
+            removeLastNChildren d (Element.toNode e)
           | otherwise = pure unit
     setup [] models
     unsubscribe <- updates `subscribe` \{ old, new } -> setup old new
@@ -589,29 +579,30 @@ array el sd = SDOM arrayImpl where
 -- | - `The `detach` function detaches the component from the DOM and unregisters
 -- |   any event handlers.
 attach
-  :: forall eff model
+  :: forall model
    . Element
   -> model
   -> SDOM Void Unit model model
-  -> Eff (dom :: DOM, frp :: FRP, ref :: REF | eff)
-       { push :: (model -> model) -> Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) Unit
-       , detach :: Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) Unit
+  -> Effect
+       { push :: (model -> model) -> Effect Unit
+       , detach :: Effect Unit
        }
 attach root model v = do
-  modelRef <- newRef model
+  modelRef <- Ref.new model
   document <- window >>= document
   { event, push } <- create
-  fragment <- createDocumentFragment (htmlDocumentToDocument document)
-  let n = documentFragmentToNode fragment
+  fragment <- createDocumentFragment (HTMLDocument.toDocument document)
+  let n = DocumentFragment.toNode fragment
   { events, unsubscribe } <- unSDOM v n unit model event
-  let pushNewModel e = do
-        oldModel <- readRef modelRef
-        let f = either absurd id e
+  let pushNewModel :: Either Void (model -> model) -> Effect Unit
+      pushNewModel e = do
+        oldModel <- Ref.read modelRef
+        let f = either absurd identity e
             newModel = f oldModel
-        _ <- writeRef modelRef newModel
+        _ <- Ref.write newModel modelRef
         push { old: oldModel, new: newModel }
   unsubscribe1 <- events `subscribe` pushNewModel
-  _ <- appendChild n (elementToNode root)
+  _ <- appendChild n (Element.toNode root)
   pure
     { push: pushNewModel <<< Right
     , detach: unsubscribe *> unsubscribe1

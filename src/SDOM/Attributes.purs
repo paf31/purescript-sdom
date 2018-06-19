@@ -10,10 +10,11 @@ module SDOM.Attributes
   ) where
 
 import Prelude
-import DOM.HTML.HTMLInputElement (setChecked, setDisabled, setValue)
-import DOM.Node.Element (removeAttribute, setAttribute)
+
 import SDOM (Attr, unsafeAttr)
 import Unsafe.Coerce (unsafeCoerce)
+import Web.DOM.Element (removeAttribute, setAttribute)
+import Web.HTML.HTMLInputElement (setChecked, setDisabled, setValue)
 
 attr :: forall context model. String -> (context -> model -> String) -> Attr context model
 attr attrName f =
