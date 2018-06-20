@@ -2,20 +2,16 @@ module Main where
 
 import Prelude
 
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Exception (EXCEPTION, throw)
-import Control.Monad.Eff.Ref (REF)
-import DOM (DOM)
-import DOM.HTML (window)
-import DOM.HTML.Types (htmlDocumentToNonElementParentNode)
-import DOM.HTML.Window (document)
-import DOM.Node.NonElementParentNode (getElementById)
 import Data.Maybe (Maybe(..))
-import Data.Newtype (wrap)
-import FRP (FRP)
+import Effect (Effect)
+import Effect.Exception (throw)
 import SDOM (SDOM, attach, text, text_)
 import SDOM.Components as Components
 import SDOM.Elements as E
+import Web.DOM.NonElementParentNode (getElementById)
+import Web.HTML (window)
+import Web.HTML.HTMLDocument (toNonElementParentNode)
+import Web.HTML.Window (document)
 
 data WidgetType
   = BasicWidget
@@ -61,14 +57,10 @@ select =
     , E.p_ [ text \_ selectedProduct -> "The price is " <> priceOf selectedProduct ]
     ]
 
-main :: Eff ( dom :: DOM
-            , exception :: EXCEPTION
-            , frp :: FRP
-            , ref :: REF
-            ) Unit
+main :: Effect Unit
 main = do
-  document <- map htmlDocumentToNonElementParentNode (window >>= document)
-  container <- getElementById (wrap "container") document
+  document <- map toNonElementParentNode (window >>= document)
+  container <- getElementById "container" document
   case container of
     Just el -> void do
       attach el BasicWidget select
