@@ -1,7 +1,7 @@
 module SDOM.Events where
 
 import SDOM
-import DOM.Event.Event as Event
+import Web.Event.Event as Event
 
 change
   :: forall context e

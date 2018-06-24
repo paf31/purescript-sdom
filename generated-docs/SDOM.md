@@ -40,11 +40,11 @@ of type `SDOM channel context i o` directly, to focus a component on a
 particular piece of the model:
 
 ```
-> :type text (const id)
+> :type text (const identity)
 forall channel context a. SDOM channel context String a
 
 > import Data.Lens
-> :type _1 (text (const id))
+> :type _1 (text (const identity))
 forall channel context a b.
   SDOM channel context
     (Tuple String b)
@@ -120,7 +120,7 @@ forall context r.
 #### `unsafeAttr`
 
 ``` purescript
-unsafeAttr :: forall context model. (forall eff. context -> Element -> { init :: model -> Eff (dom :: DOM | eff) Unit, update :: { old :: model, new :: model } -> Eff (dom :: DOM | eff) Unit }) -> Attr context model
+unsafeAttr :: forall context model. (context -> Element -> { init :: model -> Effect Unit, update :: { old :: model, new :: model } -> Effect Unit }) -> Attr context model
 ```
 
 Create an attribute unsafely, by providing functions which initialize
@@ -295,7 +295,7 @@ _Note:_
 #### `attach`
 
 ``` purescript
-attach :: forall eff model. Element -> model -> SDOM Void Unit model model -> Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) { push :: (model -> model) -> Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) Unit, detach :: Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) Unit }
+attach :: forall model. Element -> model -> SDOM Void Unit model model -> Effect { push :: (model -> model) -> Effect Unit, detach :: Effect Unit }
 ```
 
 Attach a component to the DOM.
@@ -317,7 +317,7 @@ The result contains two functions:
 #### `unsafeSDOM`
 
 ``` purescript
-unsafeSDOM :: forall channel context i o. (forall eff. Node -> context -> i -> Event { old :: i, new :: i } -> Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) { events :: Event (Either channel (i -> o)), unsubscribe :: Eff (dom :: DOM, frp :: FRP, ref :: REF | eff) Unit }) -> SDOM channel context i o
+unsafeSDOM :: forall channel context i o. (Node -> context -> i -> Event { old :: i, new :: i } -> Effect { events :: Event (Either channel (i -> o)), unsubscribe :: Effect Unit }) -> SDOM channel context i o
 ```
 
 This function is provided in order to wrap existing Javascript components.
@@ -374,7 +374,7 @@ For example, clicking this button starts a timer which raises a `Unit`
 event every second.
 
 ```
-> :type text (const id)
+> :type text (const identity)
 forall channel context a. SDOM channel context String a
 
 > import SDOM.Elements as E
