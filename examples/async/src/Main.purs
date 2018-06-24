@@ -65,8 +65,8 @@ counter_ =
 
 main :: Effect Unit
 main = do
-  document <- map htmlDocumentToNonElementParentNode (window >>= document)
-  container <- getElementById (wrap "container") document
+  document <- map toNonElementParentNode (window >>= document)
+  container <- getElementById "container" document
   case container of
     Just el -> void do
       attach el { value: 0, mode: Neither } counter_

@@ -12,7 +12,7 @@
     "url": "git://github.com/paf31/purescript-sdom.git"
   },
   "dependencies": {
-    "purescript-event": "^1.0.0",
+    "purescript-event": "^1.2.3",
     "purescript-profunctor": "^4.0.0",
     "purescript-refs": "^4.0.0",
     "purescript-web-dom": "^1.0.0",
@@ -21,6 +21,6 @@
   "devDependencies": {
     "purescript-psci-support": "^4.0.0",
     "purescript-profunctor-lenses": "^4.0.0",
-    "purescript-drawing": "justinwoo/purescript-drawing#compiler/0.12"
+    "purescript-drawing": "^4.0.0"
   }
 }
